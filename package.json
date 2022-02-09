@@ -22,6 +22,7 @@
     "express-async-handler": "^1.2.0",
     "express-flash": "^0.0.2",
     "express-session": "^1.17.2",
+    "googleapis": "^92.0.0",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.6",
