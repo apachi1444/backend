@@ -1,13 +1,13 @@
 const express = require("express");
 const path = require("path");
-// cette application va recevoir les requetes et les demandes
+/******cette application va recevoir les requetes et les demandes*********/
 const app = express();
 const { checkUser, requireAuth } = require("./Middlewares/auth");
 const cookieParser = require("cookie-parser");
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
-//Avec ceci, Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
+/********Avec ceci, Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req*********/
 app.use(express.json());
 const userRoutes = require("./Routes/userRoutes");
 const pubRoutes = require("./Routes/pubRoutes");
@@ -22,7 +22,7 @@ app.use(session({
         maxAge:"24H"
     }
 }))
-app.use(express.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors());
 /*******Initialize passport******/
 const passport = require('./Middlewares/passport-config');
