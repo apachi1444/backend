@@ -5,7 +5,7 @@ const generateToken = require("../../Utils/generateToken");
 const { signInErrors } = require("../../Utils/errorsUtils");
 
 exports.signup = (req, res, next) => {
-  //salt combien de fois on appplique l'algo de hashage
+  /*********salt determines how many times we apply the hashing algorithms********/
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -25,13 +25,15 @@ exports.signup = (req, res, next) => {
 };
 
 exports.register = async (req, res, next) => {
-  // to validate the data done with the user
-  // const validation = joi.va(req.body, schema);
-  // res.send(validation);
+  /*****
+  to validate the data done with the user
+  const validation = joi.va(req.body, schema)
+  res.send(validation)
+  *****/
 
-  // the joi validate function is not available now
+  /*******the joi validate function is not available now*************/
 
-  // verifiy if the user already exists or not
+  /********verifiy if the user already exists or not********/
   const existOrNot = await User.findOne({ email: req.body.email });
   if (existOrNot) {
     return res.status(400).send("Email Already exists");
@@ -60,9 +62,7 @@ exports.register = async (req, res, next) => {
     res.status(200).send({ errors });
   }
 };
-/////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////
+/**************************Line Break************************/
 
 exports.Signin = async (req, res, next) => {
   const { email, password } = req.body;
@@ -71,8 +71,8 @@ exports.Signin = async (req, res, next) => {
 
     if (user && (await user.matchPassword(password))) {
       const token = generateToken(user._id);
-      // for the httponly is designed for allowing ( consultable que par notre serveur)
-      // for the jwt is the name of the cookie
+      /******for the httponly is designed for allowing ( consultable que par notre serveur)*****/
+      /******for the jwt is the name of the cookie*********/
       res.cookie("jwt", token, { httpOnly: true });
       res.json({
         _id: user._id,
@@ -87,22 +87,22 @@ exports.Signin = async (req, res, next) => {
   }
 };
 
-/////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////
+/*****************************************************
+******************************************************/
 
 exports.logout = (req, res) => {
+  //if we are using passport.js
+  //req.logout() or req.logOut();
   res.cookie("jwt", "", { maxAge: 1 });
   res.redirect("/");
 };
 
-/////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
+/*****************************************************
+******************************************************/
 exports.login = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
-      //401 unauthorized
+      /********401 unauthorized********/
       if (!user) return res.status(401).json({ error: "user not found !" });
       bcrypt
         .compare(req.body.password, user.password)
@@ -111,8 +111,8 @@ exports.login = (req, res, next) => {
             return res.status(400).json({ error: "Password Incorrect" });
           res.status(200).json({
             userId: user._id,
-            // first argument in the jwt is the payload our data , second it is the secret key pour encoder
-            // et pourquoi on utlise le token pour ne pas permettre aux users de modifier les objets des autres users
+            /*****first argument in the jwt is the payload our data , second it is the secret key to encode it*****/
+            /*********et pourquoi on utlise le token pour ne pas permettre aux users de modifier les objets des autres users******/
             token: jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
               expiresIn: "24H",
             }),
@@ -122,7 +122,7 @@ exports.login = (req, res, next) => {
           res.status(500).json({ error: err });
         });
     })
-    //catch for example a server error
+    /********catch for example a server error**********************/
     .catch((error) => {
       res.status(500).json({ error: error });
     });

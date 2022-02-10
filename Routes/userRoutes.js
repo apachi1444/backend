@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const protect = require("../Middlewares/auth");
-// const verifyLogin = require("../Middlewares/auth");
+//const verifyLogin = require("../Middlewares/auth")
 
 const userCtrl = require("../Controllers/UserControllers/UserController");
 const userCtrlAuth = require("../Controllers/UserControllers/UserAuthController");
@@ -9,11 +9,11 @@ const UploadProfile = require("../Controllers/UplodadControllers/UploadProfile")
 const multerConfig = require("../Middlewares/multer-config");
 const multer = require("multer");
 const upload = multer();
-
-// au cas ou on va protéger notre route par le middleware on doit inseree l auth avant notre controller
-// route.post("/delete" , auth , deletePost)
+const passport = require('../Middlewares/passport-config');
+/********au cas ou on va protéger notre route par le middleware on doit inseree l auth avant notre controller******/
+/********route.post("/delete" , auth , deletePost)********/
 router.route("/signup").post(userCtrlAuth.signup);
-router.route("/login").post(userCtrlAuth.login);
+router.route("/login").post(passport.authenticate('local',{successRedirect:'/',session:true,successFlash:'Login was successful'}),userCtrlAuth.login);
 router.route("/signin").post(userCtrlAuth.Signin);
 router.route("/register").post(multerConfig, userCtrlAuth.register);
 

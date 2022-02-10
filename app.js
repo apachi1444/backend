@@ -4,14 +4,31 @@ const path = require("path");
 const app = express();
 const { checkUser, requireAuth } = require("./Middlewares/auth");
 const cookieParser = require("cookie-parser");
-
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const session = require('express-session');
 //Avec ceci, Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
 app.use(express.json());
 const userRoutes = require("./Routes/userRoutes");
 const pubRoutes = require("./Routes/pubRoutes");
-const connectDB = require("./config/connectDB");
+const connectDB = require("./Config/connectDB");
 connectDB();
 app.use(cookieParser());
+app.use(session({
+    secret:"Some secret",
+    saveUninitialized:false,
+    resave:false,
+    cookie:{
+        maxAge:"24H"
+    }
+}))
+app.use(express.urlencoded({extended:true}));
+app.use(cors());
+/*******Initialize passport******/
+const passport = require('./Middlewares/passport-config');
+app.use(passport.initialize());
+app.use(passport.session());
+
 // const mongoose = require("mongoose");
 // mongoose
 //   .connect(

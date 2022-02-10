@@ -6,20 +6,20 @@ const { isEmail } = require("validator");
 const userSchema = mongoose.Schema({
   profession: {
     type: String,
-    required: [true, "choose your role please!"],
+    required: [true, "choose your profession please!"],
     enum: {
       values: ["Student", "Professional"],
       message: "{VALUE} is not supported",
     },
   },
-  name: {
+  firstName: {
     type: String,
-    required: [true, "type a name please!"],
+    required: [true, "type your firstname please!"],
     min: [3, "Must be at least 6, got {VALUE}"],
   },
-  lastname: {
+  lastName: {
     type: String,
-    required: [true, "type a lastname please!"],
+    required: [true, "type your  lastname please!"],
     min: [3, "Must be at least 6, got {VALUE}"],
   },
   gender: {
@@ -29,14 +29,14 @@ const userSchema = mongoose.Schema({
   },
   phone: {
     type: String,
-    required: [true, "type a number please!"],
+    required: [true, "type your phone number please!"],
     unique: true,
-    // validate: {
-    //   validator: function (v) {
-    //     return /\d{3}-\d{3}-\d{4}/.test(v);
-    //   },
-    //   message: (props) => `${props.value} is not a valid phone number!`,
-    // },
+    validate: {
+      validator: function (v) {
+        return /(\+212|0)\d{3}\d{3}\d{3}/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
     min: [10, "Must be at least 6, got {VALUE}"],
   },
   // pays: {
@@ -55,12 +55,22 @@ const userSchema = mongoose.Schema({
       message: "{VALUE} is not supported",
     },
   },
+  userName:{
+    type:String,
+    required:[true,'Choose a username'],
+    unique:true,
+    trim:true
+  },
   email: {
     type: String,
     required: [true, "type a email please!"],
     unique: true,
     min: [6, "Must be at least 6, got {VALUE}"],
-    valide: [isEmail],
+    valide: {
+      validator:(email)=>{
+        return isEmail(email);
+      }
+    },
     trim: true,
     lowercase: true,
   },
@@ -89,11 +99,12 @@ const userSchema = mongoose.Schema({
 
 userSchema.plugin(uniqueValidator);
 
+
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// this method will be called if the user just create his account so he won't see the originla password
+// this method will be called if the user just create his account so he won't see the original password
 // will encrypt password everytime its saved
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -116,5 +127,5 @@ userSchema.statics.login = async function (email, password) {
 };
 
 // we should add the option that we can mask the phone in the pub
-
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model('User',userSchema);
+module.exports = {User,userSchema};
