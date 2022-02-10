@@ -1,5 +1,5 @@
 const fs = require("fs");
-const User = require("../../Models/userModel");
+const {User} = require("../../Models/userModel");
 const { promisify } = require("util");
 const pipeline = promisify(require("stream").pipeline);
 module.exports.updateProfile = async (req, res) => {
