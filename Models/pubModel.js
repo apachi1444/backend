@@ -18,7 +18,7 @@ const pubSchema = mongoose.Schema(
         message: "{VALUE} is not supported",
       },
     },
-    // this is for the secteur
+    /*******this is for the secteur****/
     zone: {
       type: String,
       required: [true, "choose your zone please!"],
