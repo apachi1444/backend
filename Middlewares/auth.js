@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../Models/userModel");
+const {User} = require("../Models/userModel");
 // c est pour verifier si le user est touhours connected or not
 module.exports = (req, res, next) => {
   try {
@@ -18,7 +18,6 @@ module.exports = (req, res, next) => {
     });
   }
 };
-
 module.exports.checkUser = (req, res, next) => {
   const token = req.cookies.jwt;
   if (token) {
@@ -39,7 +38,6 @@ module.exports.checkUser = (req, res, next) => {
     next();
   }
 };
-
 module.exports.requireAuth = (req, res, next) => {
   const token = req.cookies.jwt;
   if (token) {
