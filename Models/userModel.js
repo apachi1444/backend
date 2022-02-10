@@ -39,14 +39,6 @@ const userSchema = mongoose.Schema({
     },
     min: [10, "Must be at least 6, got {VALUE}"],
   },
-  // pays: {
-  //   type: String,
-  //   required: [true, "choose your country please!"],
-  //   enum: {
-  //     values: ["Maroc", "Togo"],
-  //     message: "{VALUE} is not supported",
-  //   },
-  // },
   city: {
     type: String,
     required: [true, "choose your city please!"],
@@ -93,8 +85,8 @@ const userSchema = mongoose.Schema({
     type: [String],
   },
   date: { type: Date, default: Date.now() },
-  // nom  , prenom , date naissance , image,  adresse , ville , zone , pays  , profession
-  // etudiant ou propeiétaire
+  /******nom,prenom,date naissance,image,adresse,ville,zone,pays,profession
+  etudiant ou propeiétaire**********/
 });
 
 userSchema.plugin(uniqueValidator);
@@ -104,8 +96,8 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// this method will be called if the user just create his account so he won't see the original password
-// will encrypt password everytime its saved
+/*****this method will be called if the user just create his account so he won't see the original password******/
+/******will encrypt password everytime its saved*******/
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -126,6 +118,6 @@ userSchema.statics.login = async function (email, password) {
   throw new Error("email is not valid");
 };
 
-// we should add the option that we can mask the phone in the pub
+/*******we should add the option that we can mask the phone in the pub******/
 const User = mongoose.model('User',userSchema);
 module.exports = {User,userSchema};
