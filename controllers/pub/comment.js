@@ -15,7 +15,7 @@ module.exports.editCommentPost = async(req,res) => {
      }); 
 };
 
-module.exports.commentPost = (res, req) => {
+module.exports.commentPost = (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   };
