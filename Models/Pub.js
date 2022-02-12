@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const {userSchema} = require('./userModel');
 const pubSchema = mongoose.Schema(
   {
     typeAnnouncement: {
@@ -18,18 +18,18 @@ const pubSchema = mongoose.Schema(
         message: "{VALUE} is not supported",
       },
     },
-    // this is for the secteur
+    /*******this is for the secteur****/
     zone: {
       type: String,
       required: [true, "choose your zone please!"],
       enum: {
-        values: ["jnane", "sidi Abbad"],
+        values: ["Jnane Awrad", "Sidi Abbad"],
         message: "{VALUE} is not supported",
       },
     },
     address: {
       type: String,
-      required: [true, "choose your zone please!"],
+      required: [true, "Please add your address."],
     },
     specifiers: {
       type: {
@@ -42,7 +42,7 @@ const pubSchema = mongoose.Schema(
       },
       number_rooms: {
         type: Number,
-        required: [true, "choose your city please!"],
+        required: [true, "Please specify the number of rooms."],
         enum: {
           values: [1, 2, 3, 4],
           message: "{VALUE} is not supported",
@@ -50,7 +50,7 @@ const pubSchema = mongoose.Schema(
       },
       livingRooms: {
         type: Number,
-        required: [true, "choose your city please!"],
+        required: [true, "Please specify the number of living rooms."],
         enum: {
           values: [1, 2, 3, 4],
           message: "{VALUE} is not supported",
@@ -66,7 +66,7 @@ const pubSchema = mongoose.Schema(
       },
       priceSyndical: {
         type: Number,
-        required: [true, "choose your city please!"],
+        required: [true, "Specify the price."],
       },
     },
     description: {
@@ -75,12 +75,12 @@ const pubSchema = mongoose.Schema(
         required: true,
         min: 5,
       },
-      content: {
+    content: {
         type: String,
         required: true,
         min: 10,
       },
-      price: {
+     price: {
         type: Number,
         required: true,
         min: 10,
@@ -90,11 +90,10 @@ const pubSchema = mongoose.Schema(
       data: Buffer,
       contentType: String,
     },
-    // user: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   required: true,
-    //   ref: "User",
-    // },
+    user: {
+      type:userSchema,
+      required:true,
+    },
     posterId: {
       type: String,
       required: true,

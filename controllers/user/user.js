@@ -1,13 +1,13 @@
 const bcrypt = require("bcrypt");
-const User = require("../../Models/userModel");
+const {User} = require("../../Models/userModel");
 const jwt = require("jsonwebtoken");
 const generateToken = require("../..//Utils/generateToken");
 const expressAsyncHandler = require("express-async-handler");
 const fs = require("fs");
 const ObjectId = require("mongoose").Types.ObjectId;
 
-///////////////////////
-// this is for the update of the profile
+
+/***this is for the update of the profile***/
 exports.updateProfile = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   const userObject = req.file
@@ -39,7 +39,7 @@ exports.updateProfile = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// this is for the delete of the user
+/****this is for the delete of the user****/
 
 exports.deleteProfile = expressAsyncHandler(async (req, res) => {
   try {
@@ -55,15 +55,15 @@ exports.deleteProfile = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// this is for the get all of the users
+/****this is for the get all of the users*****/
 
 exports.getAllUsers = expressAsyncHandler(async (req, res) => {
   // if we userModel.find().select('-name')
   // ca veut dire we must exclude the attribue name .
-  const users = await User.find();
+  const users = await User.find({});
   res.status(200).json({ users });
 });
-
+/*****Get a specific user information*****/
 exports.getUserInfo = expressAsyncHandler(async (req, res) => {
   console.log(req.params.id);
   if (!ObjectId.isValid(req.params.id)) {
@@ -76,7 +76,7 @@ exports.getUserInfo = expressAsyncHandler(async (req, res) => {
     }
   }).select("-password");
 });
-
+/*******Follow a user*****/
 exports.follow = expressAsyncHandler(async (req, res) => {
   if (
     !ObjectId.isValid(req.params.id) ||
@@ -102,9 +102,11 @@ exports.follow = expressAsyncHandler(async (req, res) => {
         if (err) return res.status(400).json(err);
       }
     );
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
 });
-
+/*****Unfollow a user******/
 exports.unfollow = expressAsyncHandler(async (req, res) => {
   if (
     !ObjectId.isValid(req.params.id) ||
@@ -130,5 +132,7 @@ exports.unfollow = expressAsyncHandler(async (req, res) => {
         if (err) return res.status(400).json(err);
       }
     );
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
 });
