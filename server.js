@@ -63,8 +63,6 @@ global.setTimeout(() => {
 
 const server = http.createServer(app);
 
-
-
 const socket = require("socket.io");
 let io = socket(server); // we want that socket to be functionning in this server
 // it will wait in the server for a user making a websocket
