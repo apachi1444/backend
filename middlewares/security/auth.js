@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const {User} = require("../Models/userModel");
-// c est pour verifier si le user est touhours connected or not
+const { User } = require("../Models/User");
+
 module.exports = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];

@@ -1,21 +1,23 @@
 const multer = require("multer");
-const MIME_TYPES = {
+
+const imageTypes = {
   "image/jpeg": "jpeg",
   "image/jpg": "jpg",
   "image/png": "png",
 };
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, __dirname+"/Images");
+    callback(null, __dirname + "/Images");
   },
-  /*****Generate a unique name for our image file*****/
+
+  //Generating a unique name for our image file
   filename: (req, file, callback) => {
     const name = file.originalname.split(" ").join("_");
-    const extension = MIME_TYPES[file.mimetype];
+    const extension = imageTypes[file.mimetype];
     callback(null, name + Date.now() + "." + extension);
   },
 });
-// pour expliquer que ce ficheier s'agit d'un fichier unique qui contient des images
+
 module.exports = multer({ 
   storage:storage,
   limits:{fileSize:5000000}

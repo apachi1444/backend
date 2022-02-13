@@ -6,7 +6,7 @@ const { isEmail } = require("validator");
 const userSchema = mongoose.Schema({
   profession: {
     type: String,
-    required: [true, "choose your profession please!"],
+    required: [true, "Choose your profession please!"],
     enum: {
       values: ["Student", "Professional"],
       message: "{VALUE} is not supported",
@@ -14,7 +14,7 @@ const userSchema = mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: [true, "type your firstname please!"],
+    required: [true, "Type your firstname please!"],
     min: [3, "Must be at least 6, got {VALUE}"],
   },
   lastName: {
@@ -24,12 +24,12 @@ const userSchema = mongoose.Schema({
   },
   gender: {
     type: String,
-    required: [true, "choose a gender please!"],
+    required: [true, "Choose your gender please!"],
     enum: { values: ["Male", "Female"], message: "{VALUE} is not supported" },
   },
   phone: {
     type: String,
-    required: [true, "type your phone number please!"],
+    required: [true, "Type your phone number please!"],
     unique: true,
     validate: {
       validator: function (v) {
@@ -41,7 +41,7 @@ const userSchema = mongoose.Schema({
   },
   city: {
     type: String,
-    required: [true, "choose your city please!"],
+    required: [true, "Choose your city please!"],
     enum: {
       values: ["Kech", "Casa"],
       message: "{VALUE} is not supported",
@@ -55,7 +55,7 @@ const userSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, "type a email please!"],
+    required: [true, "Type an email please!"],
     unique: true,
     min: [6, "Must be at least 6, got {VALUE}"],
     valide: {
@@ -68,7 +68,7 @@ const userSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "type a password please!"],
+    required: [true, "Type a password please!"],
     min: [6, "Must be at least 6, got {VALUE}"],
     max: 1024,
   },
@@ -84,24 +84,22 @@ const userSchema = mongoose.Schema({
   following: {
     type: [String],
   },
-  date: { type: Date, default: Date.now() },
-  /******nom,prenom,date naissance,image,adresse,ville,zone,pays,profession
-  etudiant ou propeiétaire**********/
+  date: { 
+    type: Date, 
+    default: Date.now() 
+  },
 });
 
 userSchema.plugin(uniqueValidator);
-
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-/*****this method will be called if the user just create his account so he won't see the original password******/
-/******will encrypt password everytime its saved*******/
+//this method will be called if the user just create his account so he won't see the original password
+//we will encrypt password everytime its saved
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    next();
-  }
+  if (!this.isModified("password")) next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
@@ -110,14 +108,11 @@ userSchema.statics.login = async function (email, password) {
   const user = await this.findOne({ email });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
-    if (auth) {
-      return user;
-    }
-    throw new Error("Password Incorrect ");
+    if (auth) return user;
+    throw new Error("Incorrect password");
   }
-  throw new Error("email is not valid");
+  throw new Error("Email is not valid");
 };
 
-/*******we should add the option that we can mask the phone in the pub******/
-const User = mongoose.model('User',userSchema);
-module.exports = {User,userSchema};
+const User = mongoose.model('User', userSchema);
+module.exports = { User, userSchema };

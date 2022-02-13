@@ -11,10 +11,10 @@ const multer = require("multer");
 const upload = multer();
 const passport = require('../Middlewares/passport-config');
 
-/********au cas ou on va protéger notre route par le middleware on doit inseree l auth avant notre controller******/
-/********route.post("/delete" , auth , deletePost)********/
 router.route("/signup").post(userCtrlAuth.signup);
-router.route("/login").post(passport.authenticate('local',{successRedirect:'/',session:true,successFlash:'Login was successful'}),userCtrlAuth.login);
+router.route("/login").post(passport.authenticate('local',{
+    successRedirect:'/', session:true, successFlash:'Login was successful'}
+    ),userCtrlAuth.login);
 router.route("/signin").post(userCtrlAuth.Signin);
 router.route("/register").post(multerConfig, userCtrlAuth.register);
 
