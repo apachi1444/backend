@@ -36,14 +36,14 @@ exports.register = async (req, res, next) => {
   /********verifiy if the user already exists or not********/
   const existOrNot = await User.findOne({ email: req.body.email });
   if (existOrNot) {
-    return res.status(400).send("Email Already exists");
+    return res.status(400).josn({response:"Email Already exists"});
   }
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
   const user = new User({
-    name: req.body.name,
-    lastname: req.body.lastname,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     profession: req.body.profession,
     gender: req.body.gender,
     phone: req.body.phone,
@@ -59,7 +59,7 @@ exports.register = async (req, res, next) => {
     res.json({ token: generateToken(usersaved._id) });
   } catch (error) {
     const errors = SignupError(error);
-    res.status(200).send({ errors });
+    res.status(200).json({ errors });
   }
 };
 /**************************Line Break************************/
