@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const Pub = require("../../Models/pubModel");
+const Pub = require("../../Models/Post");
 const ObjectId = require("mongoose").Types.ObjectId;
-const {User} = require("../../Models/userModel");
+const { User } = require("../../Models/User");
 
 const getPub = asyncHandler(async (req, res) => {
   const pub = await Pub.findOne({ user: req.user._id });
@@ -10,7 +10,7 @@ const getPub = asyncHandler(async (req, res) => {
 
 const getPubById = asyncHandler(async (req, res) => {
   const pub = await Pub.findById(req.params.id);
-
+  
   if (pub) {
     res.json(pub);
   } else {

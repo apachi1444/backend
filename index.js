@@ -5,13 +5,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const requests = require("./requests/requests");
 const { checkUser, requireAuth } = require("./middlewares/security/auth");
 const passport = require("./middlewares/passport/passport-config");
 
 // importing routes:
-const userRoutes = require("./routes/userRoutes");
-const postRoutes = require("./routes/pubRoutes");
+const userRoutes = require("./routes/user");
+const postRoutes = require("./routes/post");
 const connectDB = require("./config/connectDB");
 
 app.use(express.json());
@@ -35,10 +34,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/user", userRoutes);
-app.use("/api/posts", postRoutes);
-
-app.use("/images", express.static(path.join(__dirname, "Images")));
+app.use("/api/users", checkUser, userRoutes);
+app.use("/api/posts", requireAuth,  postRoutes);
+app.use("/api/images", express.static(path.join(__dirname, "Images")));
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`The server is up running on port: ${process.env.PORT || 5000}`);

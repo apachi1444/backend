@@ -3,9 +3,9 @@ const User = require("../../Models/userModel");
 const jwt = require("jsonwebtoken");
 const generateToken = require("../../Utils/generateToken");
 const { signInErrors } = require("../../Utils/errorsUtils");
+const { response } = require('./../../utils/response');
 
 exports.signup = (req, res, next) => {
-  /*********salt determines how many times we apply the hashing algorithms********/
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -13,14 +13,17 @@ exports.signup = (req, res, next) => {
       user
         .save()
         .then(() => {
-          res.status(200).json({ message: "user created with succes" });
+          //later on we won't return all the user data, just some would do
+          response(res, false, 'Profile created successfully', user, 200);
         })
         .catch((err) => {
-          res.status(400).json({ err: err.message });
+          console.log(err);//just for testing
+          response(res, true, 'Something went wrong, please check your network connection', {}, 400);
         });
     })
     .catch((error) => {
-      res.status(500).json({ error: error });
+      response(res, true, "Something went wrong, can't create your profile, please check your network connection", 
+      {}, 400);
     });
 };
 
@@ -30,13 +33,11 @@ exports.register = async (req, res, next) => {
   const validation = joi.va(req.body, schema)
   res.send(validation)
   *****/
-
-  /*******the joi validate function is not available now*************/
-
-  /********verifiy if the user already exists or not********/
-  const existOrNot = await User.findOne({ email: req.body.email });
-  if (existOrNot) {
-    return res.status(400).josn({response:"Email Already exists"});
+ 
+  //does the user exists?
+  const doesExist = await User.findOne({ email: req.body.email });
+  if (doesExist) {
+    return response(res, true, 'This email has been used before, use another one please', {}, 400);
   }
 
   const salt = await bcrypt.genSalt(10);
