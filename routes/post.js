@@ -1,19 +1,19 @@
 const express = require("express");
-const pubController = require("../controllers/post/post.js");
+const postController = require("../controllers/post/post.js");
 const router = express.Router();
 const protect = require("../middlewares/security/auth.js");
 // const multer = require("../middlewares/multer/multer-config.js");
-const controllerController = require("../controllers/post/comment");
+const commentController = require("../controllers/post/comment");
 
-router.get("/", protect, pubController.getPub);
+router.get("/", protect, postController.getPub);
 router.route("/:id")
-    .get(pubController.getPubById)
-    .delete(protect, pubController.DeletePub)
-    .put(protect, pubController.UpdatePub);
-router.post("/create", pubController.CreatePub);
+    .get(postController.getPubById)
+    .delete(protect, postController.DeletePub)
+    .put(protect, postController.UpdatePub);
+router.post("/create", postController.CreatePub);
 
-router.patch("/comment-post/:id", controllerController.commentPost);
-router.patch("/edit-comment-post/:id", controllerController.editCommentPost);
-router.patch("/delete-comment-post/:id", controllerController.deleteCommentPost);
+router.patch("/comment-post/:id", commentController.commentPost);
+router.patch("/edit-comment-post/:id", commentController.editCommentPost);
+router.patch("/delete-comment-post/:id", commentController.deleteCommentPost);
 
 module.exports = router;

@@ -36,7 +36,7 @@ app.use(passport.session());
 
 app.use("/api/users", checkUser, userRoutes);
 app.use("/api/posts", requireAuth,  postRoutes);
-app.use("/api/images", express.static(path.join(__dirname, "Images")));
+app.use("/api/images", express.static(path.join(__dirname, "images")));
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`The server is up running on port: ${process.env.PORT || 5000}`);

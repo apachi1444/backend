@@ -1,17 +1,19 @@
 const ObjectId = require("mongoose").Types.ObjectId;
-const Pub = require("../../Models/pubModel");
+const Post = require("../../Models/Post");
+const { response } = require("../../utils/response");
+
 module.exports.editCommentPost = async(req,res) => {
-  const {ID} = req.params;
+  const { ID } = req.params;
   const newText = req.body.newText;
   if(!ObjectID.isValid(ID)){
-  return res.status(400).send("ID does not exist: " + req.params.id);
+  return response(res, true, "ID does not exist: " + req.params.id, {}, 400);
   };
-  await Pub.update({" comments.commenterId" : ID },{$set : {"comments.$.text" : newText} })
+  await Post.update({ "comments.commenterId" : ID }, { $set : {"comments.$.text" : newText } })
     .then( result =>{
-       res.status(200).json({message:"Comment deleted successfully"});                                            
+       response(res, false, 'Comment deleted successfully', {}, 200);                                            
      })
      .catch(e=>{
-       res.status(400).send(err);
+      response(res, false, "Comment coudn't be deleted, try later", {}, 200); 
      }); 
 };
 
@@ -21,7 +23,7 @@ module.exports.commentPost = (req, res) => {
   }
 
   try {
-    return Pub.findByIdAndUpdate(
+    return Post.findByIdAndUpdate(
       req.params.id,
       {
         $push: {
@@ -52,7 +54,7 @@ module.exports.deleteCommentPost = async(req,res) => {
   if(!ObjectID.isValid(ID)){
     return res.status(400).send("ID does not exist: " + req.params.id);
   };
-  await Pub.findOneAndUpdate({" comments.commenterId" : ID },{$pull : { comments : { commenterId : ID } }})
+  await Post.findOneAndUpdate({" comments.commenterId" : ID },{$pull : { comments : { commenterId : ID } }})
       .then(result=>{
          res.status(200).json({message:"Comment deleted successfully"});                                            
        })

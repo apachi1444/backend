@@ -1,30 +1,16 @@
 const mongoose = require("mongoose");
 const { userSchema } = require('./User');
 
-const Post = mongoose.Schema(
-  {
-    typeAnnouncement: {
-      type: String,
-      required: [true, "Choose your type of post  please!"],
-      enum: {
-        values: ["Coloc", "Allocation"],
-        message: "{VALUE} is not supported",
-      },
+const postSchema = mongoose.Schema({
+    posterId: {
+      type: mongoose.Types.ObjectId,
+      required: true,
     },
     city: {
       type: String,
       required: [true, "Choose your city please!"],
       enum: {
         values: ["Kech", "Casa"],
-        message: "{VALUE} is not supported",
-      },
-    },
-    /*******This is for region****/
-    zone: {
-      type: String,
-      required: [true, "Choose your zone please!"],
-      enum: {
-        values: ["Jnane Awrad", "Sidi Abbad"],
         message: "{VALUE} is not supported",
       },
     },
@@ -41,12 +27,12 @@ const Post = mongoose.Schema(
           message: "{VALUE} is not supported",
         },
       },
-      number_rooms: {
+      roomsNumber: {
         type: Number,
         required: [true, "Please specify the number of rooms."],
         enum: {
-          values: [1, 2, 3, 4],
-          message: "{VALUE} is not supported",
+          values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+          message: "{VALUE} is not supported as a number of rooms",
         },
       },
       livingRooms: {
@@ -62,7 +48,7 @@ const Post = mongoose.Schema(
         required: [true, "Choose your city please!"],
         enum: {
           values: ["rez de chaussé", 1, 2, 3, 4],
-          message: "{VALUE} is not supported",
+          message: "{VALUE} is not supported as value",
         },
       },
       priceSyndical: {
@@ -71,53 +57,29 @@ const Post = mongoose.Schema(
       },
     },
     description: {
-      title: {
+      intro: {
         type: String,
         required: true,
         min: 5,
       },
-    content: {
-        type: String,
-        required: true,
-        min: 10,
-      },
-     price: {
+      price: {
         type: Number,
         required: true,
         min: 10,
       },
     },
     images: {
-      data: Buffer,
-      contentType: String,
-    },
-    user: {
-      type:userSchema,
-      required:true,
-    },
-    posterId: {
-      type: String,
-      required: true,
+      type: [ String ],
     },
     comments: {
-      type: [
-        {
-          commenterId: String,
-          commenterName: String,
-          text: String,
-          timestamp: Number,
-        },
-      ],
-      required: true,
+      type: String, //We ll just stringify the data structure to make it simple
+      required: false,
     },
-  },
+    postedAt:{
+      type: Date,
+      default: Date.now
+    }
+});
 
-  {
-    timestamps: true,
-  },
-  {
-    collection: "pubs",
-  }
-);
-
-module.exports = mongoose.model("Post", Post);
+const Post=mongoose.model("Post", postSchema);
+module.exports = { Post, postSchema };

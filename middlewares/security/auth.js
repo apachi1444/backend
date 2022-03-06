@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const { User } = require("../Models/User");
+const { User } = require("../../Models/User");
+const { response }= require('../../utils/response');
 
 module.exports = (req, res, next) => {
   try {
@@ -7,17 +8,17 @@ module.exports = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
     const userId = decodedToken.userId;
     if (req.body.userId && req.body.userId !== userId) {
-      throw new Error("Invalid user ID");
+      response(res, true, 'Your id is ether not valid or you are accessing wrong account', {}, 400);
     } else {
       req.user = decodedToken;
       next();
     }
   } catch {
-    res.status(401).json({
-      error: new Error("Invalid request!"),
-    });
+    response(res, true, 'The request is not valid, plz change id or get one', {}, 401);
   }
 };
+
+//Check if the user does exists on the db
 module.exports.checkUser = (req, res, next) => {
   const token = req.cookies.jwt;
   if (token) {
@@ -26,10 +27,8 @@ module.exports.checkUser = (req, res, next) => {
         res.locals.user = null;
         res.cookies("jwt", "", { maxAge: 1 });
       } else {
-        console.log("this is the id of the decodedToken", decodedToken.id);
         const user = User.findOne(decodedToken.id);
         res.locals.user = user;
-        console.log(res.locals.user);
         next();
       }
     });
@@ -43,14 +42,13 @@ module.exports.requireAuth = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET_KEY, async (err, decodedToken) => {
       if (err) {
-        console.log(err);
-        res.send("no token");
+        response(res, true, 'The token of this user is not valid, plz change id or get one', {}, 400);
       } else {
         console.log(decodedToken.id);
         next();
       }
     });
   } else {
-    console.log("no token");
+    response(res, true, 'The token of this user is not valid, plz change id or get one', {}, 400);
   }
 };

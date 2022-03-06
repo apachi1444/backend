@@ -4,58 +4,14 @@ const bcrypt = require("bcrypt");
 const { isEmail } = require("validator");
 
 const userSchema = mongoose.Schema({
-  profession: {
+  username: {
     type: String,
-    required: [true, "Choose your profession please!"],
-    enum: {
-      values: ["Student", "Professional"],
-      message: "{VALUE} is not supported",
-    },
-  },
-  firstName: {
-    type: String,
-    required: [true, "Type your firstname please!"],
-    min: [3, "Must be at least 6, got {VALUE}"],
-  },
-  lastName: {
-    type: String,
-    required: [true, "type your  lastname please!"],
-    min: [3, "Must be at least 6, got {VALUE}"],
-  },
-  gender: {
-    type: String,
-    required: [true, "Choose your gender please!"],
-    enum: { values: ["Male", "Female"], message: "{VALUE} is not supported" },
-  },
-  phone: {
-    type: String,
-    required: [true, "Type your phone number please!"],
-    unique: true,
-    validate: {
-      validator: function (v) {
-        return /(\+212|0)\d{3}\d{3}\d{3}/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid phone number!`,
-    },
-    min: [10, "Must be at least 6, got {VALUE}"],
-  },
-  city: {
-    type: String,
-    required: [true, "Choose your city please!"],
-    enum: {
-      values: ["Kech", "Casa"],
-      message: "{VALUE} is not supported",
-    },
-  },
-  userName:{
-    type:String,
-    required:[true,'Choose a username'],
-    unique:true,
-    trim:true
+    required: [true, "Type your username please!"],
+    min: [5, "Must be at least of length 5, got {VALUE}"],
   },
   email: {
     type: String,
-    required: [true, "Type an email please!"],
+    required: [true, "Type your email please!"],
     unique: true,
     min: [6, "Must be at least 6, got {VALUE}"],
     valide: {
@@ -63,56 +19,98 @@ const userSchema = mongoose.Schema({
         return isEmail(email);
       }
     },
-    trim: true,
-    lowercase: true,
+    trim: true
+  },
+  phone: {
+    type: String,
+    required: false,
+    unique: true,
+    validate: {
+      validator: (v)=>{
+        return /(\+212|0)\d{3}\d{3}\d{3}/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
+    min: [10, "Must be at least 10, got {VALUE}"],
+  },
+  city: {
+    type: String,
+    required: [true, "Choose your city please!"]
   },
   password: {
     type: String,
-    required: [true, "Type a password please!"],
+    required: [true, "Type your password please!"],
     min: [6, "Must be at least 6, got {VALUE}"],
     max: 1024,
   },
-  imageUrl: {
+  foreGroundImage: {
     type: String,
-    required: true,
+    required: false,
+    default:
+      "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+  },
+  backGroundImage: {
+    type: String,
+    required: false,
     default:
       "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
   },
   followers: {
-    type: [String],
+    type: [ mongoose.Types.ObjectId ],
+    default: []
   },
   following: {
-    type: [String],
+    type: [ mongoose.Types.ObjectId ],
+    default: []
   },
-  date: { 
+  friends: {
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  networks: {
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  posts: {
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  messages: {
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  notifications: {
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  videoCalls:{
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  audioCalls: {
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  invitations: {
+    type: [ mongoose.Types.ObjectId ],
+    default: []
+  },
+  stars: {
+    type: Number,
+    default: 0
+  },
+  bio: {
+    type: String,
+    default: 'No Bio'
+  },
+  settings: {
+    type: mongoose.Types.ObjectId,
+    required: false
+  },
+  joiningDate: { 
     type: Date, 
     default: Date.now() 
   },
 });
-
-userSchema.plugin(uniqueValidator);
-
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
-
-//this method will be called if the user just create his account so he won't see the original password
-//we will encrypt password everytime its saved
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
-
-userSchema.statics.login = async function (email, password) {
-  const user = await this.findOne({ email });
-  if (user) {
-    const auth = await bcrypt.compare(password, user.password);
-    if (auth) return user;
-    throw new Error("Incorrect password");
-  }
-  throw new Error("Email is not valid");
-};
-
-const User = mongoose.model('User', userSchema);
-module.exports = { User, userSchema };
+const User=mongoose.model("User", userSchema);
+module.exports={ User, userSchema };

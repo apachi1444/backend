@@ -1,13 +1,14 @@
 const bcrypt = require("bcrypt");
-const {User} = require("../../Models/userModel");
+const { User } = require("../../Models/User");
 const jwt = require("jsonwebtoken");
-const generateToken = require("../..//Utils/generateToken");
+const generateToken = require("../../logic/generateToken.js");
 const expressAsyncHandler = require("express-async-handler");
 const fs = require("fs");
+const { response } = require("../../utils/response");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 
-/***this is for the update of the profile***/
+// Updating profile
 exports.updateProfile = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   const userObject = req.file
@@ -21,62 +22,58 @@ exports.updateProfile = expressAsyncHandler(async (req, res) => {
   if (user) {
     user.name = req.body.name || user.name;
     if (req.body.password) {
-      user.password = req.body.password;
+      userObject.password = await digest(req.body.password);
     }
     const updatedUser = User.updateOne(
       { _id: req.params.id },
-      { ...userObject, _id: req.params.id }
+      { ...userObject, _id: req.params.id, ...user }
     );
 
-    res.json({
+    response(res, false, '', {
       _id: updatedUser._id,
       name: updatedUser.name,
-      token: generateToken(updatedUser._id),
-    });
+      token: generateToken(updatedUser._id)
+    }, 200);
   } else {
-    res.status(404);
-    throw new Error("User Not Found");
+    response(res, true, 'This user does not exists', {}, 404);
   }
 });
 
-/****this is for the delete of the user****/
-
+// Deleting the user
 exports.deleteProfile = expressAsyncHandler(async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
     const filename = user.imageUrl.split("/images/")[1];
     fs.unlink(`images/${filename}`, () => {
       User.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: "User Deleted!" }))
-        .catch((error) => res.status(400).json({ error }));
+        .then(() => response(res, false, 'User deleted', {}, 200))
+        .catch((error) => response(res, true, "Could not delete the user, try later", error, 400));
     });
   } catch (error) {
-    res.status(500).json({ error });
+    response(res, true, 'Something went wrong please try later', error, 500);
   }
 });
 
-/****this is for the get all of the users*****/
-
+//getting all users
 exports.getAllUsers = expressAsyncHandler(async (req, res) => {
-  // if we userModel.find().select('-name')
-  // ca veut dire we must exclude the attribue name .
-  const users = await User.find({});
-  res.status(200).json({ users });
+  const users = await User.find();
+  response(res, false, '', users, 200);
 });
-/*****Get a specific user information*****/
+
+//getting a specific user info
 exports.getUserInfo = expressAsyncHandler(async (req, res) => {
-  console.log(req.params.id);
   if (!ObjectId.isValid(req.params.id)) {
-    return res.status(404).send("ID unknown " + req.params.id);
+    return response(res, true, "The passed id does not match any user, please choose another one", {}, 404);
   }
   User.findById(req.params.id, (err, user) => {
-    if (!err) res.send(user);
+    if (!err) response(res, false,'', user, 200);
     else {
-      console.log("this user is not found " + req.params.id);
+      response(res, true, "This user couldn't be found, the id is not valid", {}, 404);
     }
-  }).select("-password");
+  });
 });
-/*******Follow a user*****/
+
+// Follow a user
 exports.follow = expressAsyncHandler(async (req, res) => {
   if (
     !ObjectId.isValid(req.params.id) ||
@@ -106,6 +103,7 @@ exports.follow = expressAsyncHandler(async (req, res) => {
     console.error(e);
   }
 });
+
 /*****Unfollow a user******/
 exports.unfollow = expressAsyncHandler(async (req, res) => {
   if (

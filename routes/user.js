@@ -1,24 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const protect = require("../Middlewares/auth");
-
-//const verifyLogin = require("../Middlewares/auth")
-
+const protect = require("../middlewares/security/auth");
 const userCtrl = require("../controllers/user/user");
-const userCtrlAuth = require("../controllers/user/userAuth");
-const uploadProfile = require("../controllers/uploaded/uploadProfile");
+const  signIn = require("../controllers/user/signIn");
+const  signUp = require("../controllers/user/signUp");
 const multerConfig = require("../middlewares/multer/multer-config");
 const multer = require("multer");
 const upload = multer();
-const passport = require('../middlewares/passport-config');
+// const passport = require('../middlewares/passport/passport-config');
+const { uploadImage } = require("../controllers/upload/uploadImage");
 
-router.post("/signup", userCtrlAuth.signup);
-router.post("/login",
-    passport.authenticate('local',{successRedirect:'/',session:true,
-    successFlash:'Login was successful'}),
-    userCtrlAuth.login);
-router.post("/signin", userCtrlAuth.Signin);
-router.post("/register", multerConfig, userCtrlAuth.register);
+router.post("/signup", signUp);
+router.post("/signin", signIn);
 
 router.post("/updateProfile/:id", protect, userCtrl.updateProfile);
 router.delete("/deleteProfile/:id", userCtrl.deleteProfile);
@@ -27,6 +20,6 @@ router.get("/", userCtrl.getAllUsers);
 router.patch("/follow/:id", userCtrl.follow);
 router.patch("/unfollow/:id", userCtrl.unfollow);
 
-router.post("/upload", upload.single("file"), uploadProfile.updateProfile);
+router.post("/upload", upload.single("file"), uploadImage);
 
 module.exports = router;
