@@ -78,6 +78,9 @@ const postSchema = mongoose.Schema({
     postedAt:{
       type: Date,
       default: Date.now
+    },
+    additionalServices:{
+      type: [ String ]
     }
 });
 
