@@ -7,6 +7,7 @@ const fs = require("fs");
 const { response } = require("../../utils/response");
 const ObjectId = require("mongoose").Types.ObjectId;
 
+/***this is for the update of the profile***/
 
 // Updating profile
 exports.updateProfile = expressAsyncHandler(async (req, res) => {
@@ -29,13 +30,19 @@ exports.updateProfile = expressAsyncHandler(async (req, res) => {
       { ...userObject, _id: req.params.id, ...user }
     );
 
-    response(res, false, '', {
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      token: generateToken(updatedUser._id)
-    }, 200);
+    response(
+      res,
+      false,
+      "",
+      {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        token: generateToken(updatedUser._id),
+      },
+      200
+    );
   } else {
-    response(res, true, 'This user does not exists', {}, 404);
+    response(res, true, "This user does not exists", {}, 404);
   }
 });
 
@@ -46,29 +53,64 @@ exports.deleteProfile = expressAsyncHandler(async (req, res) => {
     const filename = user.imageUrl.split("/images/")[1];
     fs.unlink(`images/${filename}`, () => {
       User.deleteOne({ _id: req.params.id })
-        .then(() => response(res, false, 'User deleted', {}, 200))
-        .catch((error) => response(res, true, "Could not delete the user, try later", error, 400));
+        .then(() => response(res, false, "User deleted", {}, 200))
+        .catch((error) =>
+          response(
+            res,
+            true,
+            "Could not delete the user, try later",
+            error,
+            400
+          )
+        );
     });
   } catch (error) {
-    response(res, true, 'Something went wrong please try later', error, 500);
+    response(res, true, "Something went wrong please try later", error, 500);
   }
 });
 
+/****this is for the get all of the users*****/
+exports.getAllUsers = expressAsyncHandler(async (req, res) => {
+  // if we userModel.find().select('-name')
+  // ca veut dire we must exclude the attribue name .
+  try {
+    console.log(req);
+    const users = await User.find({});
+    console.log(users);
+    res.status(200).json({ users });
+  } catch (e) {
+    res.status(500).json({ e });
+  }
+});
+
+/*****Get a specific user information*****/
 //getting all users
 exports.getAllUsers = expressAsyncHandler(async (req, res) => {
   const users = await User.find();
-  response(res, false, '', users, 200);
+  response(res, false, "", users, 200);
 });
 
 //getting a specific user info
 exports.getUserInfo = expressAsyncHandler(async (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
-    return response(res, true, "The passed id does not match any user, please choose another one", {}, 404);
+    return response(
+      res,
+      true,
+      "The passed id does not match any user, please choose another one",
+      {},
+      404
+    );
   }
   User.findById(req.params.id, (err, user) => {
-    if (!err) response(res, false,'', user, 200);
+    if (!err) response(res, false, "", user, 200);
     else {
-      response(res, true, "This user couldn't be found, the id is not valid", {}, 404);
+      response(
+        res,
+        true,
+        "This user couldn't be found, the id is not valid",
+        {},
+        404
+      );
     }
   });
 });
