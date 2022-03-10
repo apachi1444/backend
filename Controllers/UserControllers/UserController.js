@@ -69,20 +69,6 @@ exports.deleteProfile = expressAsyncHandler(async (req, res) => {
   }
 });
 
-/****this is for the get all of the users*****/
-exports.getAllUsers = expressAsyncHandler(async (req, res) => {
-  // if we userModel.find().select('-name')
-  // ca veut dire we must exclude the attribue name .
-  try {
-    console.log(req);
-    const users = await User.find({});
-    console.log(users);
-    res.status(200).json({ users });
-  } catch (e) {
-    res.status(500).json({ e });
-  }
-});
-
 /*****Get a specific user information*****/
 //getting all users
 exports.getAllUsers = expressAsyncHandler(async (req, res) => {

@@ -159,12 +159,12 @@ exports.signUp = async (req, res) => {
 /*****************************************************
  ******************************************************/
 
-exports.logout = (req, res) => {
-  //if we are using passport.js
-  //req.logout() or req.logOut();
-  res.cookie("jwt", "", { maxAge: 1 });
-  res.redirect("/");
-};
+// exports.logout = (req, res) => {
+//   //if we are using passport.js
+//   //req.logout() or req.logOut();
+//   res.cookie("jwt", "", { maxAge: 1 });
+//   res.redirect("/");
+// };
 
 /*****************************************************
  ******************************************************/
