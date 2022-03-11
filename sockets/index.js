@@ -1,4 +1,3 @@
-
 //instancier express
 const app = require("express")();
 
@@ -36,6 +35,6 @@ io.on("connection",(socket)=>{
 })
 
 //demander au serveur http de repondre sur le port 3000
-http.listen(3000,()=>{
+http.listen(process.env.PORT || 3000,()=>{
     console.log("En train d'ecouter le port 3000");
 });

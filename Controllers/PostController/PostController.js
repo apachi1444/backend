@@ -1,80 +1,48 @@
-const asyncHandler = require("express-async-handler");
-const Pub = require("../../Models/Post");
-const ObjectId = require("mongoose").Types.ObjectId;
-const { User } = require("../../Models/User");
+const Pub = require("../../Models/Post.js");
+const { response } = require("../../utils/response.js");
+const { postSchema } = require('../../logic/joi/post.js');
 
-const getPub = asyncHandler(async (req, res) => {
-  const pub = await Pub.findOne({ user: req.user._id });
-  res.json(pub);
-});
+const getPub = async (req, res) => {
+  try {
+    const pub = await Pub.findOne({ user: req.user._id })
+    return response(res, false, '', pub, 200);
+  } catch (error) {
+    return response(res, true, 'We could not get the post, bad connection or not found', error, 400);
+  };
+};
 
-const getPubById = asyncHandler(async (req, res) => {
-  const pub = await Pub.findById(req.params.id);
-  
-  if (pub) {
-    res.json(pub);
-  } else {
-    res.status(404).json({ message: "Note not found" });
+const getPubById=async (req, res)=>{
+  try {
+    const pub = await Pub.findOne({ user: req.params._id })
+    return response(res, false, '', pub, 200);
+  } catch (error) {
+    return response(res, true, 'We could not get the post, bad connection or not found', error, 400);
+  };
+}
+const CreatePub = async (req, res) => {
+  //we ll add the images/videos later on
+  const result=postSchema.validate(req.body);
+  if (result.error) return response(res, true, result.error.details[0].message, [], 400);
+  const pub = new Pub(req.body);
+  try {
+    const createdPub = await pub.save();
+    response(res, false, createdPub, [], 201);
+  } catch (err) {
+    response(res, true, err, [], 400);
   }
+};
 
-  res.json(pub);
-});
+const DeletePub = (req, res) => {
+  Pub.deleteOne({_id: req.params.id})
+    .then(post=>response(res, false, '', post, 200))
+    .catch(e=>response(res, true, "Post couldn't be deleted, try again!", e, 400));
+};
 
-const CreatePub = asyncHandler(async (req, res) => {
-  const { posterId, title, content, category } = req.body;
-
-  if (!posterId || !title || !content || !category) {
-    res.status(400);
-    throw new Error("Please Fill all the feilds");
-  } else {
-    const pub = new Pub({ posterId, title, content, category });
-    try {
-      const createdPub = await pub.save();
-      res.status(201).json(createdPub);
-    } catch (err) {
-      res.status(00).send(err);
-    }
-  }
-});
-
-const DeletePub = asyncHandler(async (req, res) => {
-  const pub = await Pub.findById(req.params.id);
-
-  if (pub.user.toString() !== req.user._id.toString()) {
-    res.status(401);
-    throw new Error("You can't perform this action");
-  }
-
-  if (pub) {
-    await pub.remove();
-    res.json({ message: "Note Removed" });
-  } else {
-    res.status(404);
-    throw new Error("Note not Found");
-  }
-});
-
-const UpdatePub = asyncHandler(async (req, res) => {
-  const { title, content, category } = req.body;
-
-  const pub = await Pub.findById(req.params.id);
-
-  if (pub.user.toString() !== req.user._id.toString()) {
-    res.status(401);
-    throw new Error("You can't perform this action");
-  }
-
-  if (pub) {
-    pub.title = title;
-    pub.content = content;
-    pub.category = category;
-
-    const updatedPub = await pub.save();
-    res.json(updatedPub);
-  } else {
-    res.status(404);
-    throw new Error("Note not found");
-  }
-});
+const UpdatePub = (req, res) => {
+  //some validation on the req.body would be done here
+  Pub.findOneAndUpdate({_id: req.params.id}, req.body)
+    .then(post=>response(res, false, '', post, 200))
+    .catch(e=>response(res, true, "Post couldn't be updated, try again!", e, 400));
+};
 
 module.exports = { getPubById, getPub, CreatePub, DeletePub, UpdatePub };

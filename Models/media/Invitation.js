@@ -1,17 +1,19 @@
 const mongoose=require('mongoose');
 
-const InvitationSchema=mongoose.Schema({
-   timeStamp:{
+const InvitationSchema=new mongoose.Schema({
+   sentAt:{
        type: Date,
-       default: Date.now
+       default: ()=>Date.now()
    },
    invitter:{
-       type: mongoose.Types.ObjectId,
-       required: true
+       type: mongoose.SchemaTypes.ObjectId,
+       required: true,
+       ref: 'User'
    },
    invitted:{
-       type: mongoose.Types.ObjectId,
-       required: true
+       type: mongoose.SchemaTypes.ObjectId,
+       required: true,
+       ref: 'User'
    }
 });
 

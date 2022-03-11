@@ -1,12 +1,13 @@
 const mongoose=require('mongoose');
 
-const ConvSchema=mongoose.Schema({
+const ConvSchema=new mongoose.Schema({
     owners:{
-        type: [ mongoose.Types.ObjectId ]
+        type: [ mongoose.SchemaTypes.ObjectId ]
     },
-    timeStamp:{
+    sentAt:{
         type: Date,
-        default: Date.now
+        default: ()=>Date.now(),
+        immutable: true
     },
     textMsg:{
         type: String,
@@ -25,13 +26,13 @@ const ConvSchema=mongoose.Schema({
         default: false
     }
 });
-const ConversationSchema=mongoose.Schema({
+const ConversationSchema=new mongoose.Schema({
     sourceId:{
-        type: mongoose.Types.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         required: true
     },
-    DestId:{
-        type: mongoose.Types.ObjectId,
+    targetId:{
+        type: mongoose.SchemaTypes.ObjectId,
         required: true
     },
     content: {

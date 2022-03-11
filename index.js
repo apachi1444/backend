@@ -5,13 +5,13 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const { checkUser, requireAuth } = require("./Middlewares/security/auth");
+const { checkUser, requireAuth } = require("./middlewares/security/auth");
 const passport = require("./Middlewares/passport/passport-config");
 
 // importing routes:
-const userRoutes = require("./Routes/userRoutes");
-const postRoutes = require("./Routes/postRoutes");
-const connectDB = require("./Config/connectDB");
+const userRoutes = require("./routes/userRoutes");
+const postRoutes = require("./routes/postRoutes");
+const connectDB = require("./config/connectDB");
 
 app.use(express.json());
 app.use(cookieParser());

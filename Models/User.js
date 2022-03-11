@@ -4,6 +4,14 @@ const bcrypt = require("bcrypt");
 const { isEmail } = require("validator");
 
 const userSchema = mongoose.Schema({
+  joinedAt: { 
+    type: Date, 
+    default: ()=>Date.now() 
+  },
+  isOnline:{
+    type: Boolean,
+    default: false
+  },
   username: {
     type: String,
     required: [true, "Type your username please!"],
@@ -11,35 +19,31 @@ const userSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, "Type your email please!"],
+    required: [true, "This is an email, make sure your email is valid"],
     unique: true,
-    min: [6, "Must be at least 6, got {VALUE}"],
+    min: [6, 'Email must be at least of length 6'],
     valide: {
-      validator:(email)=>{
-        return isEmail(email);
-      }
+      validator:(email)=>isEmail(email)
     },
-    trim: true
+    trim: true,
+    lowercase: true
   },
   phone: {
     type: String,
     required: false,
     unique: true,
     validate: {
-      validator: (v)=>{
-        return /(\+212|0)\d{3}\d{3}\d{3}/.test(v);
-      },
+      validator: (v)=>/(\+212|0)\d{3}\d{3}\d{3}/.test(v),
       message: (props) => `${props.value} is not a valid phone number!`,
     },
     min: [10, "Must be at least 10, got {VALUE}"],
   },
   city: {
-    type: String,
-    required: [true, "Choose your city please!"]
+    type: String
   },
   password: {
     type: String,
-    required: [true, "Type your password please!"],
+    required: [true, "Password is required, please provide one"],
     min: [6, "Must be at least 6, got {VALUE}"],
     max: 1024,
   },
@@ -56,44 +60,34 @@ const userSchema = mongoose.Schema({
       "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
   },
   followers: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ],
   },
   following: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ],
   },
   friends: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ],
   },
-  networks: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+  network: {
+    type: [ mongoose.SchemaTypes.ObjectId ],
   },
   posts: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ],
   },
   messages: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ]
   },
   notifications: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ]
   },
   videoCalls:{
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ]
   },
   audioCalls: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ]
   },
   invitations: {
-    type: [ mongoose.Types.ObjectId ],
-    default: []
+    type: [ mongoose.SchemaTypes.ObjectId ]
   },
   stars: {
     type: Number,
@@ -101,16 +95,12 @@ const userSchema = mongoose.Schema({
   },
   bio: {
     type: String,
-    default: 'No Bio'
+    default: 'People Like Bios, Get One!'
   },
   settings: {
-    type: mongoose.Types.ObjectId,
-    required: false
-  },
-  joiningDate: { 
-    type: Date, 
-    default: Date.now() 
-  },
+    type: mongoose.SchemaTypes.ObjectId,
+    required: false,
+  }
 });
 const User=mongoose.model("User", userSchema);
 module.exports={ User, userSchema };
