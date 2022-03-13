@@ -4,6 +4,14 @@ const bcrypt = require("bcrypt");
 const { isEmail } = require("validator");
 
 const userSchema = mongoose.Schema({
+  joinedAt: {
+    type: Date,
+    default: () => Date.now(),
+  },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  },
   username: {
     type: String,
     // required: [true, "Type your username please!"],
@@ -11,15 +19,16 @@ const userSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, "Type your email please!"],
+    required: [true, "This is an email, make sure your email is valid"],
     unique: true,
-    min: [6, "Must be at least 6, got {VALUE}"],
+    min: [6, "Email must be at least of length 6"],
     valide: {
       validator: (email) => {
         return isEmail(email);
       },
     },
     trim: true,
+    validator: (email) => isEmail(email),
   },
   phone: {
     type: String,
@@ -29,6 +38,7 @@ const userSchema = mongoose.Schema({
       validator: (v) => {
         return /(\+212|0)\d{3}\d{3}\d{3}/.test(v);
       },
+      validator: (v) => /(\+212|0)\d{3}\d{3}\d{3}/.test(v),
       message: (props) => `${props.value} is not a valid phone number!`,
     },
     min: [10, "Must be at least 10, got {VALUE}"],
@@ -36,10 +46,11 @@ const userSchema = mongoose.Schema({
   city: {
     type: String,
     // required: [true, "Choose your city please!"],
+    type: String,
   },
   password: {
     type: String,
-    required: [true, "Type your password please!"],
+    required: [true, "Password is required, please provide one"],
     min: [6, "Must be at least 6, got {VALUE}"],
     max: 1024,
   },
@@ -94,6 +105,34 @@ const userSchema = mongoose.Schema({
   invitations: {
     type: [mongoose.Types.ObjectId],
     default: [],
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  following: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  friends: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  network: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  posts: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  messages: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  notifications: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  videoCalls: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  audioCalls: {
+    type: [mongoose.SchemaTypes.ObjectId],
+  },
+  invitations: {
+    type: [mongoose.SchemaTypes.ObjectId],
   },
   stars: {
     type: Number,
@@ -101,15 +140,11 @@ const userSchema = mongoose.Schema({
   },
   bio: {
     type: String,
-    default: "No Bio",
+    default: "People Like Bios, Get One!",
   },
   settings: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.SchemaTypes.ObjectId,
     required: false,
-  },
-  joiningDate: {
-    type: Date,
-    default: Date.now(),
   },
 });
 

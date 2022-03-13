@@ -1,11 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const protect = require("../Middlewares/security/auth");
-const userCtrl = require("../Controllers/userControllers/userController");
 const userAuthController = require("../Controllers/userControllers/userAuthController");
 const multerConfig = require("../Middlewares/multer/multer-config");
-const multer = require("multer");
-const upload = multer();
 // const passport = require('../middlewares/passport/passport-config');
 const {
   uploadImage,
@@ -14,6 +10,15 @@ const {
 router.post("/signup", userAuthController.signUp);
 router.post("/signin", userAuthController.signIn);
 router.post("/register", userAuthController.register);
+const protect = require("../middlewares/security/auth");
+const userCtrl = require("../controllers/userControllers/userController");
+const signController = require("../controllers/userControllers/signController");
+// const multerConfig = require("../middlewares/multer/multer-config");
+const multer = require("multer");
+const upload = multer();
+
+// router.post("/signup", signController.signUp);
+// router.post("/signin", signController.signIn);
 
 router.post("/updateProfile/:id", protect, userCtrl.updateProfile);
 router.delete("/deleteProfile/:id", userCtrl.deleteProfile);

@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const User = require("../../Models/User");
 const jwt = require("jsonwebtoken");
 const generateToken = require("../../Utils/generateToken");
-const { signInErrors } = require("../../Utils/errorsUtils");
 const response = require("../../Utils/response");
 const { SignUpSchema, SignInSchema } = require("../../logic/joi/sign");
 

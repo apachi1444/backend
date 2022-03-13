@@ -1,19 +1,22 @@
 const mongoose=require('mongoose');
 
 const AudiocallSchema=mongoose.Schema({
-    timeStamp:{
+    calledAt:{
         type: Date,
-        default: Date.now
+        default: ()=>Date.now(),
+        immutable: true
     },
     duration:{
         type: Number,
         default: 0
     },
     callerId:{
-        type: mongoose.Types.ObjectId
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'User'
     },
     calledId:{
-        type: mongoose.Types.ObjectId
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'User'
     }
 });
 
