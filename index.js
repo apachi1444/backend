@@ -19,20 +19,20 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 connectDB();
-app.use(
-  session({
-    secret: "Some secret",
-    saveUninitialized: false,
-    resave: false,
-    cookie: {
-      secure: true,
-      maxAge: "24H",
-    },
-  })
-);
+// app.use(
+//   session({
+//     secret: "Some secret",
+//     saveUninitialized: false,
+//     resave: false,
+//     cookie: {
+//       secure: true,
+//       maxAge: "24H",
+//     },
+//   })
+// );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 app.use("/api/users", checkUser, userRoutes);
 app.use("/api/posts", requireAuth, postRoutes);

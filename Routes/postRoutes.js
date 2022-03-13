@@ -1,9 +1,9 @@
 const express = require("express");
-const postController = require("../Controllers/PostController/PostController.js");
+const postController = require("../Controllers/postController/postController.js");
 const router = express.Router();
 const protect = require("../Middlewares/security/auth.js");
 // const multer = require("../middlewares/multer/multer-config.js");
-const commentController = require("../Controllers/CommentController/CommentController");
+const commentController = require("../Controllers/commentController/commentController");
 
 router.get("/", protect, postController.getPub);
 router
