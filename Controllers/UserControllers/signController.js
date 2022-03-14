@@ -1,8 +1,14 @@
 const User = require("../../Models/User");
 const jwt = require("jsonwebtoken");
-const { SignUpSchema, SignInSchema } = require('../../logic/joi/sign');
-const { digest, isInDatabase, validPassword } = require('../../logic/hash/hash.js');
-const response=require('../../utils/response.js');
+const { SignUpSchema, SignInSchema } = require("../../logic/joi/sign");
+const {
+  digest,
+  isInDatabase,
+  validPassword,
+} = require("../../logic/hash/hash.js");
+const response = require("../../utils/response.js");
+const generateToken = require("../../Utils/generateToken");
+const { sendMail } = require("../../logic/nodemailer/nodeMailer");
 
 exports.signIn = async (req, res) => {
   const valid = SignInSchema.validate(req.body);
@@ -11,7 +17,7 @@ exports.signIn = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.isInDatabase(req.body.email);
     if (user) {
       const isValid = await validPassword(req.body.password, user.password);
       if (!isValid) {
@@ -23,7 +29,7 @@ exports.signIn = async (req, res) => {
       );
       res["authToken"] = token;
       return response(res, false, "", user, 200);
-    };
+    }
     return response(
       res,
       true,
@@ -78,21 +84,27 @@ exports.signUp = async (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: hashed,
-    phone: req.body.phone
+    phone: req.body.phone,
   });
 
-  userInstance.save()
-    .then(u=>{
+  userInstance
+    .save()
+    .then(async (u) => {
       console.log(u);
-      const token = jwt.sign(
-        { email: u.email, _id: u._id },
-        process.env.JWT_KEY,
-        { expiresIn: "1h" }
-      );
+      const token = generateToken(u._id, u.email);
       res.token = token;
+      const confirmation = sendMail(res, u);
+      console.log(confirmation);
       return response(res, false, "", u, 200);
-    }).catch(e=>{
+    })
+    .catch((e) => {
       console.log(e);
-      return response(res, true, "Connection error, can't save your credentials, please try later", [], 400);
+      return response(
+        res,
+        true,
+        "Connection error, can't save your credentials, please try later",
+        [],
+        400
+      );
     });
 };
