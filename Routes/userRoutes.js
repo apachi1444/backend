@@ -1,24 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const userAuthController = require("../Controllers/userControllers/userAuthController");
-const multerConfig = require("../Middlewares/multer/multer-config");
-// const passport = require('../middlewares/passport/passport-config');
-const {
-  uploadImage,
-} = require("../Controllers/uplodadControllers/uploadImage");
+const sign = require("../controllers/userControllers/signController");
+const { register } = require('../controllers/userControllers/userAuthController');
+const { uploadImage } = require("../Controllers/uplodadControllers/uploadImage");
 
-router.post("/signup", userAuthController.signUp);
-router.post("/signin", userAuthController.signIn);
-router.post("/register", userAuthController.register);
 const protect = require("../middlewares/security/auth");
 const userCtrl = require("../controllers/userControllers/userController");
-const signController = require("../controllers/userControllers/signController");
-// const multerConfig = require("../middlewares/multer/multer-config");
+
 const multer = require("multer");
 const upload = multer();
 
-// router.post("/signup", signController.signUp);
-// router.post("/signin", signController.signIn);
+router.post("/signup", sign.signUp);
+router.post("/signin", sign.signIn);
+// router.post("/register", register.register);
 
 router.post("/updateProfile/:id", protect, userCtrl.updateProfile);
 router.delete("/deleteProfile/:id", userCtrl.deleteProfile);

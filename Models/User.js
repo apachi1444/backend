@@ -14,7 +14,7 @@ const userSchema = mongoose.Schema({
   },
   username: {
     type: String,
-    // required: [true, "Type your username please!"],
+    required: [true, "Type your username please!"],
     min: [5, "Must be at least of length 5, got {VALUE}"],
   },
   email: {
@@ -30,9 +30,15 @@ const userSchema = mongoose.Schema({
     trim: true,
     validator: (email) => isEmail(email),
   },
+  password: {
+    type: String,
+    required: [true, "Password is required, please provide one"],
+    min: [6, "Must be at least 6, got {VALUE}"],
+    max: 1024,
+  },
   phone: {
     type: String,
-    required: false,
+    required: true,
     unique: true,
     validate: {
       validator: (v) => {
@@ -45,14 +51,6 @@ const userSchema = mongoose.Schema({
   },
   city: {
     type: String,
-    // required: [true, "Choose your city please!"],
-    type: String,
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required, please provide one"],
-    min: [6, "Must be at least 6, got {VALUE}"],
-    max: 1024,
   },
   foreGroundImage: {
     type: String,
@@ -68,39 +66,30 @@ const userSchema = mongoose.Schema({
   },
   followers: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   following: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   friends: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   networks: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   posts: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   messages: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   notifications: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   videoCalls: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   audioCalls: {
     type: [mongoose.Types.ObjectId],
-    default: [],
   },
   invitations: {
     type: [mongoose.Types.ObjectId],

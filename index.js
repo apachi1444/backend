@@ -4,9 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const session = require("express-session");
 const { checkUser, requireAuth } = require("./middlewares/security/auth");
-const passport = require("./Middlewares/passport/passport-config");
 
 // importing routes:
 const userRoutes = require("./routes/userRoutes");
@@ -19,20 +17,6 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 connectDB();
-// app.use(
-//   session({
-//     secret: "Some secret",
-//     saveUninitialized: false,
-//     resave: false,
-//     cookie: {
-//       secure: true,
-//       maxAge: "24H",
-//     },
-//   })
-// );
-
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 app.use("/api/users", checkUser, userRoutes);
 app.use("/api/posts", requireAuth, postRoutes);

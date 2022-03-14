@@ -1,5 +1,8 @@
 const User = require("../../Models/User");
 const jwt = require("jsonwebtoken");
+const { SignUpSchema, SignInSchema } = require('../../logic/joi/sign');
+const { digest, isInDatabase, validPassword } = require('../../logic/hash/hash.js');
+const response=require('../../utils/response.js');
 
 exports.signIn = async (req, res) => {
   const valid = SignInSchema.validate(req.body);
@@ -19,8 +22,8 @@ exports.signIn = async (req, res) => {
         process.env.JWT_KEY
       );
       res["authToken"] = token;
-      return response(res, true, "", user, 200);
-    }
+      return response(res, false, "", user, 200);
+    };
     return response(
       res,
       true,
@@ -74,21 +77,22 @@ exports.signUp = async (req, res) => {
   const userInstance = new User({
     username: req.body.username,
     email: req.body.email,
-    location: req.body.location,
-    occupation: req.body.occupation,
     password: hashed,
+    phone: req.body.phone
   });
 
-  try {
-    const savedUser = await userInstance.save();
-    const token = jwt.sign(
-      { email: savedUser.email, _id: savedUser._id },
-      process.env.JWT_KEY,
-      { expiresIn: "1h" }
-    );
-    res.token = token;
-    return response(res, true, savedUser, [], 400);
-  } catch (err) {
-    return response(res, true, "Connection error, please try later", [], 400);
-  }
+  userInstance.save()
+    .then(u=>{
+      console.log(u);
+      const token = jwt.sign(
+        { email: u.email, _id: u._id },
+        process.env.JWT_KEY,
+        { expiresIn: "1h" }
+      );
+      res.token = token;
+      return response(res, false, "", u, 200);
+    }).catch(e=>{
+      console.log(e);
+      return response(res, true, "Connection error, can't save your credentials, please try later", [], 400);
+    });
 };
