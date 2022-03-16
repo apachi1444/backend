@@ -1,21 +1,19 @@
-const express = require("express");
-// const multer = require("../middlewares/multer/multer-config.js");
+const router = require("express").Router();
 const commentController = require("../Controllers/commentController/commentController");
 const postController = require("../controllers/postController/postController.js");
-const router = express.Router();
-const protect = require("../middlewares/security/auth.js");
+const authorized = require("../middlewares/security/authorized.js");
 
-router.get("/", protect, postController.getPub);
+router.get("/", authorized, postController.getPost);
 router
   .route("/:id")
-  .get(postController.getPubById)
-  .delete(protect, postController.DeletePub)
-  .put(protect, postController.UpdatePub);
-router.post("/new-post", postController.CreatePub);
+  .get(authorized, postController.getPostById)
+  .delete(authorized, postController.deletePost)
+  .put(authorized, postController.updatePost);
+router.post("/new-post", authorized, postController.createPost);
 
 //  the comments are represented by single stringified tree so
 //  editing, deleting, submitting a comment means modifying the tree
 //  which is done on the frontend and sent here to change comment string. Simple right!!
 
-router.patch("/comment-post/", commentController.editCommentPost);
+router.patch("/comment-post/", authorized, commentController.editCommentPost);
 module.exports = router;

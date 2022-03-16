@@ -1,9 +1,19 @@
 const nodemailer = require("nodemailer");
-exports.sendMail = async (res, usersaved) => {
-  try {
-    // Generate test SMTP service account from ethereal.email
-    // Only needed if you don't have a real mail account for testing
+const response = require("../../utils/response");
 
+const emailText=(email, code)=>`
+  Nous avons reçu une demande nous indiquant d'utiliser cette adresse e-mail afin de récupérer le compte Google 
+  ${email}.
+  ${code}
+  Saisissez le code lorsque vous y êtes invité afin de nous indiquer que nous pouvons vous contacter à cette 
+  adresse e-mail.
+  Si vous ne reconnaissez pas le compte ${email}, il est possible que quelqu'un ait indiqué 
+  votre adresse e-mail par erreur. Vous pouvez ignorer cet e-mail en toute sécurité.
+  Cordialement,
+  L'équipe de Colocakesh
+` ;
+exports.sendMail = async (res, email, code) => {
+  try {
     try {
       let testAccount = await nodemailer.createTestAccount();
 
@@ -24,11 +34,11 @@ exports.sendMail = async (res, usersaved) => {
 
       // send mail with defined transport object
       let info = await transporter.sendMail({
-        from: '"Node Mailer Contact 👻" <loca@gmail.com>', // sender address
-        to: "ahmedzekri918@gmail.com", // sender addresslist of receivers
-        subject: "Hello ✔", // Subject line
-        text: "Hello world?", // plain text body
-        html: "<b>Hello world?</b>", // html body
+        from: "colocakesh2022@gmail.com", // sender address
+        to: email, // sender addresslist of receivers
+        subject: "Account Verification", // Subject line
+        text: emailText(email, code), // plain text body
+        html: "<b>Hello Colocakesh</b>", // html body
       });
 
       console.log("Message sent: %s", info.messageId);
@@ -36,11 +46,12 @@ exports.sendMail = async (res, usersaved) => {
 
       // Preview only available when sending through an Ethereal account
       console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+      return response(res, false, "Email has been verified", [], 200);
     } catch (e) {
-      console.log(e);
+      return response(res, true, "Email couldn't be verified", e, 400);
     }
   } catch (error) {
     // const errors = SignupError(error);
-    return res.status(200).json({ error });
+    return response(res, true, "Email couldn't be verified", error, 400);
   }
 };

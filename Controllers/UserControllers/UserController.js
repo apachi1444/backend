@@ -1,10 +1,8 @@
-const bcrypt = require("bcrypt");
 const { User } = require("../../Models/User");
-const jwt = require("jsonwebtoken");
 const generateToken = require("../../logic/generateToken.js");
 const expressAsyncHandler = require("express-async-handler");
 const fs = require("fs");
-const { response } = require("../../utils/response");
+const  response  = require("../../utils/response");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 /***this is for the update of the profile***/

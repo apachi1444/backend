@@ -9,6 +9,7 @@ const {
 const response = require("../../utils/response.js");
 const generateToken = require("../../Utils/generateToken");
 const { sendMail } = require("../../logic/nodemailer/nodeMailer");
+const { Settings } = require("../../Models/Settings");
 
 exports.signIn = async (req, res) => {
   const valid = SignInSchema.validate(req.body);
@@ -27,8 +28,7 @@ exports.signIn = async (req, res) => {
         { _id: user._id, email: user.email },
         process.env.JWT_KEY
       );
-      res["authToken"] = token;
-      return response(res, false, "", user, 200);
+      return res.header('auth-token', token).send({error: false, message: '', data: user});
     }
     return response(
       res,
@@ -89,16 +89,36 @@ exports.signUp = async (req, res) => {
 
   userInstance
     .save()
-    .then(async (u) => {
-      console.log(u);
+    .then((u) => {
       const token = generateToken(u._id, u.email);
       res.token = token;
-      const confirmation = sendMail(res, u);
-      console.log(confirmation);
-      return response(res, false, "", u, 200);
+      
+      // No need to send the email in the signup(no website does this! it's not necessary) but if the user 
+      //forgot password this endpoint will be added
+      
+      // const confirmation = await sendMail(res, u.email, Math.floor(1000 + Math.random() * 9000));
+      // console.log(confirmation);
+      
+      // Creating the settings for the user
+      const settings=new Settings({ownerId: u._id});
+      settings.save()
+        .then((s)=>{
+          User.findOneAndUpdate({ _id: u._id }, {
+            settings: s._id
+          }).then(()=>{
+            const token = jwt.sign(
+              { _id: u._id, email: u.email },
+              process.env.JWT_KEY
+            );
+            return res.header('auth-token', token).send({error: false, message: '', data: u});
+          }).catch((e)=>response(res, true, "", e.errors, 400));
+        }).catch(e=>{
+          return response(res, true, "", e.errors, 400)
+        });
+
     })
     .catch((e) => {
-      console.log(e);
+      // console.log(e?.errors);
       return response(
         res,
         true,
