@@ -10,6 +10,7 @@ module.exports=function messanger(io, socket) {
         } catch (error) {
             console.log(error);
             return warning(socket, {error: 'Message could not be sent, try again later!'});   
+        
         }
     });
 
