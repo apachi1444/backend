@@ -5,6 +5,35 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const authorized = require("./middlewares/security/authorized");
+const server=require('http').createServer(app);
+const { Server }=require('socket.io');
+const io=new Server(server, { cors: { origin: "*" }});
+
+//importing socket handlers
+const connect=require('./sockets/connect/connect.js')
+const disconnect=require('./sockets/disconnect/disconnect.js')
+
+//setting the the session
+const session = require("express-session");
+const sharedsession = require("express-socket.io-session");
+const store=new session.MemoryStore();
+// const MongoDBStore = require('connect-mongodb-session')(session);
+// const store = new MongoDBStore({
+//   uri: process.env.URI,
+//   collection: 'users',
+// });
+
+const sessionMiddleware=session({
+  secret: `${process.env.SESSION_KEY}${Math.random()*1337}`,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    path: '/', httpOnly: false, secure: true, expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7 //it lasts for one week 
+  },
+  store
+});
+app.use(sessionMiddleware);
 
 // importing routes:
 const userRoutes = require("./routes/userRoutes");
@@ -25,6 +54,18 @@ app.use("/api/posts", authorized, postRoutes);
 app.use("/api/images", express.static(path.join(__dirname, "files", "images")));
 app.use("/api/videos", express.static(path.join(__dirname, "files", "videos")));
 
-app.listen(process.env.PORT || 5000, () => {
+//sockets handling
+io.use(sharedsession(sessionMiddleware, { autoSave: true })); //socket.handshake.session <=> req.session now
+io.on('connection', (socket)=>{
+  //handles all the triggered sockets events on both  sides while connected
+  connect(io, socket); 
+  socket.on('disconnect', ()=>{
+    //handles all the triggered sockets events on both  sides once disconnected as cleanup
+    disconnect(io, socket);
+    console.log(`The user with id ${socket.id} has been disconnected.`);
+  });
+});
+
+server.listen(process.env.PORT || 5000, () => {
   console.log(`The server is up running on port: ${process.env.PORT || 5000}`);
 });

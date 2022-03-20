@@ -1,8 +1,9 @@
 const mongoose=require('mongoose');
 
-const ConvSchema=new mongoose.Schema({
-    owners:{
-        type: [ mongoose.SchemaTypes.ObjectId ]
+const MessageSchema=new mongoose.Schema({
+    sender:{
+        type: [ mongoose.SchemaTypes.ObjectId ],
+        immutable: true
     },
     sentAt:{
         type: Date,
@@ -11,7 +12,8 @@ const ConvSchema=new mongoose.Schema({
     },
     textMsg:{
         type: String,
-        default: ""
+        default: "",
+        deleted: false
     },
     isRead:{
         type: Boolean,
@@ -27,18 +29,18 @@ const ConvSchema=new mongoose.Schema({
     }
 });
 const ConversationSchema=new mongoose.Schema({
-    sourceId:{
+    source1:{
         type: mongoose.SchemaTypes.ObjectId,
         required: true
     },
-    targetId:{
+    source2:{
         type: mongoose.SchemaTypes.ObjectId,
         required: true
     },
     content: {
-        type: [ ConvSchema ]
+        type: [ MessageSchema ]
     }
 });
 
 const Conversation=mongoose.model('Conversation', ConversationSchema);
-module.exports={ Conversation, ConversationSchema };
+module.exports={ Conversation, ConversationSchema, MessageSchema };
