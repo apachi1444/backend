@@ -17,16 +17,15 @@ exports.signIn = async (req, res) => {
   }
 
   try {
-    const user = await User.isInDatabase(req.body.email);
+    const user = await User.findOne({ email: req.body.email });
+
     if (user) {
       const isValid = await validPassword(req.body.password, user.password);
       if (!isValid) {
         return response(res, true, "Wrong password, please try again", [], 400);
       }
-      const token = jwt.sign(
-        { _id: user._id, email: user.email },
-        process.env.JWT_KEY
-      );
+      const token = generateToken(req.body._id, req.body.email);
+      console.log("this is the token", token);
       res["authToken"] = token;
       return response(res, false, "", user, 200);
     }

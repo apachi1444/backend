@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const sign = require("../controllers/userControllers/signController");
-const { register } = require('../controllers/userControllers/userAuthController');
-const { uploadImage } = require("../Controllers/uplodadControllers/uploadImage");
+const {
+  uploadImage,
+} = require("../Controllers/uplodadControllers/uploadImage");
 
+const passport = require("passport");
 const protect = require("../middlewares/security/auth");
 const userCtrl = require("../controllers/userControllers/userController");
 
@@ -22,5 +24,7 @@ router.patch("/follow/:id", userCtrl.follow);
 router.patch("/unfollow/:id", userCtrl.unfollow);
 
 router.post("/upload", upload.single("file"), uploadImage);
+
+router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
 
 module.exports = router;

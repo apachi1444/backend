@@ -8,18 +8,21 @@ const userSchema = mongoose.Schema({
     type: Date,
     default: () => Date.now(),
   },
+  googleId: {
+    type: String,
+  },
   isOnline: {
     type: Boolean,
     default: false,
   },
   username: {
     type: String,
-    required: [true, "Type your username please!"],
+    //required: [true, "Type your username please!"],
     min: [5, "Must be at least of length 5, got {VALUE}"],
   },
   email: {
     type: String,
-    required: [true, "This is an email, make sure your email is valid"],
+    //required: [true, "This is an email, make sure your email is valid"],
     unique: true,
     min: [6, "Email must be at least of length 6"],
     valide: {
@@ -32,13 +35,13 @@ const userSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Password is required, please provide one"],
+    //required: [true, "Password is required, please provide one"],
     min: [6, "Must be at least 6, got {VALUE}"],
     max: 1024,
   },
   phone: {
     type: String,
-    required: true,
+    //required: true,
     unique: true,
     validate: {
       validator: (v) => {
@@ -54,13 +57,13 @@ const userSchema = mongoose.Schema({
   },
   foreGroundImage: {
     type: String,
-    required: false,
+    //required: false,
     default:
       "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
   },
   backGroundImage: {
     type: String,
-    required: false,
+    //required: false,
     default:
       "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
   },
@@ -133,7 +136,7 @@ const userSchema = mongoose.Schema({
   },
   settings: {
     type: mongoose.SchemaTypes.ObjectId,
-    required: false,
+    //required: false,
   },
 });
 

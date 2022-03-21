@@ -17,9 +17,10 @@
     "body-parser": "^1.19.2",
     "concurrently": "^6.5.1",
     "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
-    "express": "^4.17.2",
+    "express": "^4.17.3",
     "express-async-handler": "^1.2.0",
     "express-flash": "^0.0.2",
     "express-handlebars": "^6.0.3",
@@ -32,11 +33,16 @@
     "multer": "^1.4.4",
     "nodemailer": "^6.7.2",
     "passport": "^0.5.2",
+    "passport-facebook": "^3.0.0",
+    "passport-google-id-token": "^0.4.7",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-linkedin-oauth2": "^2.0.0",
     "passport-local": "^1.0.0",
     "socket.io": "^4.4.0",
     "validator": "^13.7.0"
   },
   "devDependencies": {
+    "@types/passport-google-oauth20": "^2.0.11",
     "node-pre-gyp": "^0.17.0",
     "nodemon": "^2.0.15"
   }
