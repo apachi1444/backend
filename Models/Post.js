@@ -54,7 +54,7 @@ const postSchema = mongoose.Schema({
       message: "{VALUE} is not a floor!",
     },
   },
-  guardPrice: {
+  securityPrice: {
     type: Number,
     required: [true, "Specify the price for the security please"],
   },
@@ -72,7 +72,7 @@ const postSchema = mongoose.Schema({
     type: [ String ],
   },
   comments: {
-    type: String, //We ll just stringify the data structure to make it simple
+    type: String, //We ll just stringify the tree data structure to make it simple
     required: false,
   },
   moreServices:{

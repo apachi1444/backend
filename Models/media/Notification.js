@@ -14,20 +14,26 @@ const notSchema=new mongoose.Schema({
     },
     reacterId: {//initiates the reaction likes for exp
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     reactedId: {//who receives the reaction
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     reactionType:{
         type: String,
         required: true,
         immutable: true,
         validate:{
-            validator: v=>reactions.includes(v),
+            validator: function(r){ return reactions.includes(r);},
             message: 'This is not a valid reaction, learn to react properly!'
         }
+    },
+    isViewed: {
+        type: Boolean,
+        default: false
     }
 });
 

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const permissions=[
     'Allow only my friends',
     'Allow only my network',
@@ -6,6 +7,11 @@ const permissions=[
     'Private',
     'Public'
 ];
+
+// req={uid: uid, {key1: value1, key2: value2, ..., keyn: valuen}}; keyi is in 
+// activeStatus, location, emailVisibility, phoneVisibility, friendsListVisibility, 
+// starsVisibility, postsVisibility, cookies
+
 const settingsSchema = mongoose.Schema({
   ownerId: {
     type: mongoose.SchemaTypes.ObjectId,

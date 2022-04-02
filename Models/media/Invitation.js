@@ -14,6 +14,10 @@ const InvitationSchema=new mongoose.Schema({
        type: mongoose.SchemaTypes.ObjectId,
        required: true,
        ref: 'User'
+   },
+   isViewed: {
+       type: Boolean,
+       default: false
    }
 });
 

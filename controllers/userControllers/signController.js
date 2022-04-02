@@ -8,7 +8,14 @@ const {
 } = require("../../logic/hash/hash.js");
 const response = require("../../utils/response.js");
 const generateToken = require("../../Utils/generateToken");
-const { sendMail } = require("../../logic/nodemailer/nodeMailer");
+// const { sendMail } = require("../../logic/nodemailer/nodeMailer");
+const { Settings } = require("../../Models/Settings");
+
+// const visibleUserProperties={
+//   joinedAt: 1, isAdmin: 1, username: 1, email: 1, phone: 1, city: 1, foreGroundImage: 1, 
+//   backGroundImage: 1, followers: 1, following: 1, friends: 1, network: 1, posts: 1, messages: 1, 
+//   notifications: 1, videoCalls: 1, audioCalls: 1, invitations: 1, stars, bio: 1, settings: 1
+// };
 
 exports.signIn = async (req, res) => {
   const valid = SignInSchema.validate(req.body);
@@ -24,10 +31,18 @@ exports.signIn = async (req, res) => {
       if (!isValid) {
         return response(res, true, "Wrong password, please try again", [], 400);
       }
+<<<<<<< HEAD:Controllers/UserControllers/signController.js
       const token = generateToken(req.body._id, req.body.email);
       console.log("this is the token", token);
       res["authToken"] = token;
       return response(res, false, "", user, 200);
+=======
+      const token = jwt.sign(
+        { _id: user._id, email: user.email },
+        process.env.JWT_KEY
+      );
+      return res.header('auth-token', token).send({error: false, message: '', data: user});
+>>>>>>> 55b1986da11f166925ddba557ffb8381cac8ba8c:controllers/userControllers/signController.js
     }
     return response(
       res,
@@ -88,16 +103,36 @@ exports.signUp = async (req, res) => {
 
   userInstance
     .save()
-    .then(async (u) => {
-      console.log(u);
+    .then((u) => {
       const token = generateToken(u._id, u.email);
       res.token = token;
-      const confirmation = sendMail(res, u);
-      console.log(confirmation);
-      return response(res, false, "", u, 200);
+      
+      // No need to send the email in the signup(no website does this! it's not necessary) but if the user 
+      //forgot password this endpoint will be added
+      
+      // const confirmation = await sendMail(res, u.email, Math.floor(1000 + Math.random() * 9000));
+      // console.log(confirmation);
+      
+      // Creating the settings for the user
+      const settings=new Settings({ownerId: u._id});
+      settings.save()
+        .then((s)=>{
+          User.findOneAndUpdate({ _id: u._id }, {
+            settings: s._id
+          }).then(()=>{
+            const token = jwt.sign(
+              { _id: u._id, email: u.email },
+              process.env.JWT_KEY
+            );
+            return res.header('auth-token', token).send({error: false, message: '', data: u});
+          }).catch((e)=>response(res, true, "", e.errors, 400));
+        }).catch(e=>{
+          return response(res, true, "", e.errors, 400)
+        });
+
     })
     .catch((e) => {
-      console.log(e);
+      // console.log(e?.errors);
       return response(
         res,
         true,
