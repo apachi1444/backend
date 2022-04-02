@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const sign = require("../controllers/userControllers/signController");
 const { uploadImage } = require("../controllers/uploadControllers/uploadImage");
-const settings = require("../controllers/userControllers/settings.js");
 const userCtrl = require("../controllers/userControllers/userController");
 const authorized = require("../middlewares/security/authorized");
+const settings = require("../controllers/userControllers/settings");
 
 const multer = require("multer");
 const upload = multer();

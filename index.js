@@ -8,7 +8,6 @@ const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const { checkUser, requireAuth } = require("./middlewares/security/authorized");
 const authorized = require("./middlewares/security/authorized");
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
@@ -43,10 +42,10 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // importing routes:
-const userRoutes = require("./routes/userRoutes");
-const postRoutes = require("./routes/postRoutes");
-const signThirdPartyRoutes = require("./Routes/signThirdPartyRoutes");
-const connectDB = require("./config/connectDB");
+const userRoutes = require("./Routes/userRoutes");
+const postRoutes = require("./Routes/postRoutes");
+const thirdParty = require("./Routes/signThirdPartyRoutes");
+const connectDB = require("./Config/connectDB");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -71,12 +70,9 @@ app.use(
 );
 
 connectDB();
-// app.use("/api/users", checkUser, userRoutes);
-// app.use("/api/posts", requireAuth, postRoutes);
-app.use("/api/sign", signThirdPartyRoutes);
-app.use("/api/images", express.static(path.join(__dirname, "images")));
-app.use("/api/users", userRoutes);
+app.use("/api/users", authorized, userRoutes);
 app.use("/api/posts", authorized, postRoutes);
+app.use("/api/sign", thirdParty);
 
 // Some people would upload videos instead of images or the other way around
 app.use("/api/images", express.static(path.join(__dirname, "files", "images")));
