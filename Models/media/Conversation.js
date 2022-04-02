@@ -2,7 +2,7 @@ const mongoose=require('mongoose');
 
 const MessageSchema=new mongoose.Schema({
     sender:{
-        type: [ mongoose.SchemaTypes.ObjectId ],
+        type: mongoose.SchemaTypes.ObjectId ,
         immutable: true
     },
     sentAt:{

@@ -3,10 +3,12 @@ const commentController = require("../Controllers/commentController/commentContr
 const postController = require("../controllers/postController/postController.js");
 const authorized = require("../middlewares/security/authorized.js");
 
-router.get("/", authorized, postController.getPost);
+router.get("/match-id", authorized, postController.getPost);
+router.get("/limited-posts", authorized, postController.getPosts);
+router.get("/filter-posts", authorized, postController.getPostsByFilter);
+
 router
   .route("/:id")
-  .get(authorized, postController.getPostById)
   .delete(authorized, postController.deletePost)
   .put(authorized, postController.updatePost);
 router.post("/new-post", authorized, postController.createPost);

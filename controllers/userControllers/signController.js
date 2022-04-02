@@ -8,8 +8,14 @@ const {
 } = require("../../logic/hash/hash.js");
 const response = require("../../utils/response.js");
 const generateToken = require("../../Utils/generateToken");
-const { sendMail } = require("../../logic/nodemailer/nodeMailer");
+// const { sendMail } = require("../../logic/nodemailer/nodeMailer");
 const { Settings } = require("../../Models/Settings");
+
+// const visibleUserProperties={
+//   joinedAt: 1, isAdmin: 1, username: 1, email: 1, phone: 1, city: 1, foreGroundImage: 1, 
+//   backGroundImage: 1, followers: 1, following: 1, friends: 1, network: 1, posts: 1, messages: 1, 
+//   notifications: 1, videoCalls: 1, audioCalls: 1, invitations: 1, stars, bio: 1, settings: 1
+// };
 
 exports.signIn = async (req, res) => {
   const valid = SignInSchema.validate(req.body);

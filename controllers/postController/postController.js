@@ -3,22 +3,45 @@ const { response } = require("../../utils/response.js");
 const { postSchema } = require('../../logic/joi/post.js');
 
 const getPost = async (req, res) => {
+  const { postId=null }=req.body;
   try {
-    const post = await Post.findOne({ user: req.user._id })
+    const post = await Post.findOne({ _id: postId });
     return response(res, false, '', post, 200);
   } catch (error) {
     return response(res, true, 'We could not get the post, bad connection or not found', error?.errors, 400);
   };
 };
 
-const getPostById=async (req, res)=>{
+const getPosts = async (req, res) => {
   try {
-    const post = await Post.findOne({ user: req.params._id })
-    return response(res, false, '', post, 200);
+    const { quantity=10, page=0, mine=true }=req.body;
+    if(mine){
+      const posts = await Post.find({ posterId: req.body._id }).limit(quantity).skip(page*quantity);
+      return response(res, false, '', posts, 200);
+    }else{
+      const posts = await Post.find().limit(quantity).skip(page*quantity);
+      return response(res, false, '', posts, 200);
+    };
   } catch (error) {
     return response(res, true, 'We could not get the post, bad connection or not found', error?.errors, 400);
   };
-}
+};
+
+const getPostsByFilter = async (req, res) => {
+  try {
+    const { quantity=10, page=0, mine=true, filter=null }=req.body;
+    if(mine){
+      const posts = await Post.find(filter).limit(quantity).skip(page*quantity);
+      return response(res, false, '', posts, 200);
+    }else{
+      const posts = await Post.find().limit(quantity).skip(page*quantity);
+      return response(res, false, '', posts, 200);
+    };
+  } catch (error) {
+    return response(res, true, 'We could not get the post, bad connection or not found', error?.errors, 400);
+  };
+};
+
 const createPost = async (req, res) => {
   //we ll add the images/videos later on
   const result=postSchema.validate(req.body);
@@ -45,4 +68,4 @@ const updatePost = (req, res) => {
     .catch(e=>response(res, true, "Post couldn't be updated, try again!", e?.errors, 400));
 };
 
-module.exports = { getPostById, getPost, createPost, deletePost, updatePost };
+module.exports = { getPost, getPosts, createPost, deletePost, updatePost, getPostsByFilter };

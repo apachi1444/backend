@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
-const bcrypt = require("bcrypt");
 const { isEmail } = require("validator");
+
 
 const userSchema = mongoose.Schema({
   joinedAt: {
     type: Date,
     default: () => Date.now(),
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
   },
   isOnline: {
     type: Boolean,
@@ -41,16 +44,14 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      validator: (v) => {
-        return /(\+212|0)\d{3}\d{3}\d{3}/.test(v);
-      },
-      validator: (v) => /(\+212|0)\d{3}\d{3}\d{3}/.test(v),
-      message: (props) => `${props.value} is not a valid phone number!`,
+      validator: function(v){ return /(\+212|0)\d{3}\d{3}\d{3}/.test(v);},
+      message: function(props){ return `${props.value} is not a valid phone number!`;},
     },
     min: [10, "Must be at least 10, got {VALUE}"],
   },
   city: {
     type: String,
+    default: "Marrakesh"
   },
   foreGroundImage: {
     type: String,
@@ -73,40 +74,11 @@ const userSchema = mongoose.Schema({
   friends: {
     type: [mongoose.Types.ObjectId],
   },
-  networks: {
-    type: [mongoose.Types.ObjectId],
-  },
-  posts: {
-    type: [mongoose.Types.ObjectId],
-  },
-  messages: {
-    type: [mongoose.Types.ObjectId],
-  },
-  notifications: {
-    type: [mongoose.Types.ObjectId],
-  },
-  videoCalls: {
-    type: [mongoose.Types.ObjectId],
-  },
-  audioCalls: {
-    type: [mongoose.Types.ObjectId],
-  },
-  invitations: {
-    type: [mongoose.Types.ObjectId],
-    default: [],
-    type: [mongoose.SchemaTypes.ObjectId],
-  },
-  following: {
-    type: [mongoose.SchemaTypes.ObjectId],
-  },
-  friends: {
-    type: [mongoose.SchemaTypes.ObjectId],
-  },
   network: {
-    type: [mongoose.SchemaTypes.ObjectId],
+    type: [mongoose.Types.ObjectId],
   },
   posts: {
-    type: [mongoose.SchemaTypes.ObjectId],
+    type: [mongoose.Types.ObjectId],
   },
   messages: {
     type: [mongoose.SchemaTypes.ObjectId],
