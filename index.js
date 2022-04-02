@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const { checkUser, requireAuth } = require("./middlewares/security/auth");
+const { checkUser, requireAuth } = require("./middlewares/security/authorized");
 const authorized = require("./middlewares/security/authorized");
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
@@ -19,7 +19,6 @@ const connect = require("./sockets/connect/connect.js");
 const disconnect = require("./sockets/disconnect/disconnect.js");
 
 //setting the the session
-const session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const store = new session.MemoryStore();
 // const MongoDBStore = require('connect-mongodb-session')(session);
@@ -46,7 +45,7 @@ app.use(sessionMiddleware);
 // importing routes:
 const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
-const signRoutes = require("./routes/signRoutes");
+const signThirdPartyRoutes = require("./Routes/signThirdPartyRoutes");
 const connectDB = require("./config/connectDB");
 
 app.use(express.json());
@@ -54,9 +53,12 @@ app.use(cookieParser());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-require("./logic/google/googleSign"); // Need to pass in the argument
-require("./logic/linkedin/linkedinSign"); // Need to pass in the argument
-require("./logic/facebook/facebookSign"); // Need to pass in the argument
+require("./Controllers/thirdPartyController/google/googleSign"); // Need to pass in the argument
+require("./Controllers/thirdPartyController/linkedin/linkedinSign"); // Need to pass in the argument
+require("./Controllers/thirdPartyController/facebook/facebookSign"); // Need to pass in the argument
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Sessions
 app.use(
@@ -68,14 +70,10 @@ app.use(
   })
 );
 
-// Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
 connectDB();
-app.use("/api/users", checkUser, userRoutes);
-app.use("/api/posts", requireAuth, postRoutes);
-app.use("/api/sign", signRoutes);
+// app.use("/api/users", checkUser, userRoutes);
+// app.use("/api/posts", requireAuth, postRoutes);
+app.use("/api/sign", signThirdPartyRoutes);
 app.use("/api/images", express.static(path.join(__dirname, "images")));
 app.use("/api/users", userRoutes);
 app.use("/api/posts", authorized, postRoutes);

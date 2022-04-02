@@ -1,11 +1,12 @@
 const router = require("express").Router();
 const passport = require("passport");
+const response = require("../Utils/response");
 
 const isLoggedIn = (req, res, next) => {
   if (req.user) {
     next();
   } else {
-    res.sendStatus(401);
+    return response(res, true, "U Are not logged In ! Try Later !", {}, 401);
   }
 };
 

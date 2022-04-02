@@ -1,7 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require("dotenv").config();
-const User = require("../../Models/User");
+const User = require("../../../Models/User");
 passport.serializeUser(function (user, done) {
   // make it into a cookie
   done(null, user.id);
