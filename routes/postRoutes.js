@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const commentController = require("../Controllers/commentController/commentController");
+const commentController = require("../controllers/commentController/commentController");
 const postController = require("../controllers/postController/postController.js");
 const authorized = require("../middlewares/security/authorized.js");
 

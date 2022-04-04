@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const passport = require("passport");
-const response = require("../Utils/response");
+const response = require("../utils/response");
 
 const isLoggedIn = (req, res, next) => {
   if (req.user) {

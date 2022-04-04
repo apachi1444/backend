@@ -7,7 +7,7 @@ const {
   validPassword,
 } = require("../../logic/hash/hash.js");
 const response = require("../../utils/response.js");
-const generateToken = require("../../Utils/generateToken");
+const generateToken = require("../../utils/generateToken");
 // const { sendMail } = require("../../logic/nodemailer/nodeMailer");
 const { Settings } = require("../../Models/Settings");
 

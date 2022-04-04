@@ -42,19 +42,19 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // importing routes:
-const userRoutes = require("./Routes/userRoutes");
-const postRoutes = require("./Routes/postRoutes");
-const thirdParty = require("./Routes/signThirdPartyRoutes");
-const connectDB = require("./Config/connectDB");
+const userRoutes = require("./routes/userRoutes");
+const postRoutes = require("./routes/postRoutes");
+const thirdParty = require("./routes/signThirdPartyRoutes");
+const connectDB = require("./config/connectDB");
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-require("./Controllers/thirdPartyController/google/googleSign"); // Need to pass in the argument
-require("./Controllers/thirdPartyController/linkedin/linkedinSign"); // Need to pass in the argument
-require("./Controllers/thirdPartyController/facebook/facebookSign"); // Need to pass in the argument
+require("./controllers/thirdPartyController/google/googleSign"); // Need to pass in the argument
+require("./controllers/thirdPartyController/linkedin/linkedinSign"); // Need to pass in the argument
+require("./controllers/thirdPartyController/facebook/facebookSign"); // Need to pass in the argument
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
