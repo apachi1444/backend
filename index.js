@@ -20,6 +20,7 @@ const disconnect = require("./sockets/disconnect/disconnect.js");
 //setting the the session
 const sharedsession = require("express-socket.io-session");
 const store = new session.MemoryStore();
+
 // const MongoDBStore = require('connect-mongodb-session')(session);
 // const store = new MongoDBStore({
 //   uri: process.env.URI,
