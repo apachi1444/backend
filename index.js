@@ -18,28 +18,28 @@ const connect = require("./sockets/connect/connect.js");
 const disconnect = require("./sockets/disconnect/disconnect.js");
 
 //setting the the session
-const sharedsession = require("express-socket.io-session");
-const store = new session.MemoryStore();
-// const MongoDBStore = require('connect-mongodb-session')(session);
+// const sharedsession = require("express-socket.io-session");
+// // const store = new session.MemoryStore();
+// const MongoDBStore = require("connect-mongodb-session")(session);
 // const store = new MongoDBStore({
 //   uri: process.env.URI,
-//   collection: 'users',
+//   collection: "users",
 // });
 
-const sessionMiddleware = session({
-  secret: `${process.env.SESSION_KEY}${Math.random() * 1337}`,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    path: "/",
-    httpOnly: false,
-    secure: true,
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7, //it lasts for one week
-  },
-  store,
-});
-app.use(sessionMiddleware);
+// const sessionMiddleware = session({
+//   secret: `${process.env.SESSION_KEY}${Math.random() * 1337}`,
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: {
+//     path: "/",
+//     httpOnly: false,
+//     secure: true,
+//     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+//     maxAge: 1000 * 60 * 60 * 24 * 7, //it lasts for one week
+//   },
+//   store,
+// });
+// app.use(sessionMiddleware);
 
 // importing routes:
 const userRoutes = require("./routes/userRoutes");
@@ -53,13 +53,11 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 require("./controllers/thirdPartyController/google/googleSign"); // Need to pass in the argument
-require("./controllers/thirdPartyController/linkedin/linkedinSign"); // Need to pass in the argument
-require("./controllers/thirdPartyController/facebook/facebookSign"); // Need to pass in the argument
+// require("./controllers/thirdPartyController/linkedin/linkedinSign"); // Need to pass in the argument
+// require("./controllers/thirdPartyController/facebook/facebookSign"); // Need to pass in the argument
 // Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
 
-// Sessions
+//Sessions;
 app.use(
   cookieSession({
     maxAge: 24 * 60 * 1000, // ms
@@ -69,7 +67,11 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 connectDB();
+
 app.use("/api/users", authorized, userRoutes);
 app.use("/api/posts", authorized, postRoutes);
 app.use("/api/sign", thirdParty);
@@ -79,7 +81,7 @@ app.use("/api/images", express.static(path.join(__dirname, "files", "images")));
 app.use("/api/videos", express.static(path.join(__dirname, "files", "videos")));
 
 //sockets handling
-io.use(sharedsession(sessionMiddleware, { autoSave: true })); //socket.handshake.session <=> req.session now
+// io.use(sharedsession(sessionMiddleware, { autoSave: true })); //socket.handshake.session <=> req.session now
 io.on("connection", (socket) => {
   //handles all the triggered sockets events on both  sides while connected
   connect(io, socket);
